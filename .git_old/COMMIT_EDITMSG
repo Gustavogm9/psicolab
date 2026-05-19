@@ -1,0 +1,1 @@
+fix: rename migrations to avoid duplicate version keys

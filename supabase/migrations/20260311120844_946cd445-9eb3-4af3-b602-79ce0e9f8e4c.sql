@@ -1,0 +1,1 @@
+ALTER TABLE faturas ALTER COLUMN cliente_id DROP NOT NULL;
