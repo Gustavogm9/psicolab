@@ -146,11 +146,14 @@ const RelatorioAvaliacao = () => {
     : null;
 
   // Processar dados por questão
-  const processarDadosQuestao = (questao: any) => {
+  const processarDadosQuestao = (questao: any, index?: number) => {
     const respostas = todasRespostas
       .map(r => {
         const respostasArray = Array.isArray(r.respostas) ? r.respostas : [];
-        const resp = respostasArray.find((res: any) => res.questao_id === questao.id);
+        let resp = respostasArray.find((res: any) => res.questao_id === questao.id);
+        if (!resp && index !== undefined && index < respostasArray.length) {
+          resp = respostasArray[index];
+        }
         return resp ? (resp as any).resposta : null;
       })
       .filter(Boolean);
@@ -366,7 +369,7 @@ const RelatorioAvaliacao = () => {
           <div className="space-y-6">
             <h2 className="text-2xl font-bold">Análise por Questão</h2>
             {avaliacaoData.questoes.map((questao: any, index: number) => {
-              const dadosQuestao = processarDadosQuestao(questao);
+              const dadosQuestao = processarDadosQuestao(questao, index);
               return (
                 <Card key={questao.id}>
                   <CardHeader>
@@ -470,9 +473,13 @@ const RelatorioAvaliacao = () => {
                       <AccordionContent className="px-4 pb-4">
                         <div className="space-y-4 mt-2">
                           {avaliacaoData.questoes.map((questao: any, qIdx: number) => {
-                            const respostaQuestao = respostasArray.find(
+                            let respostaQuestao = respostasArray.find(
                               (r: any) => r.questao_id === questao.id
                             );
+
+                            if (!respostaQuestao && qIdx < respostasArray.length) {
+                              respostaQuestao = respostasArray[qIdx];
+                            }
 
                             return (
                               <div

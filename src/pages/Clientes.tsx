@@ -140,6 +140,22 @@ export default function Clientes() {
             </Card>
           ))}
         </div>
+      ) : !clientes || clientes.length === 0 ? (
+        <div className="flex flex-col items-center justify-center p-8 md:p-16 border border-dashed rounded-3xl bg-gradient-to-b from-card/30 to-card/50 backdrop-blur-lg border-primary/20 shadow-xl max-w-2xl mx-auto text-center space-y-6 animate-fade-in">
+          <div className="p-4 bg-primary/10 rounded-full border border-primary/20 text-primary shadow-inner">
+            <Building className="h-12 w-12" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-2xl font-bold tracking-tight text-foreground">Sua lista de clientes está vazia</h3>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto leading-relaxed">
+              Comece adicionando sua primeira empresa parceira para gerenciar suas avaliações corporativas (COPSOQ II), contratos recorrentes e emitir relatórios executivos de ROI.
+            </p>
+          </div>
+          <Button onClick={() => setIsCreateModalOpen(true)} className="bg-primary hover:bg-primary/95 text-primary-foreground shadow-md hover:shadow-lg transition-all duration-300">
+            <Plus className="mr-2 h-4 w-4" />
+            Cadastrar Primeiro Cliente
+          </Button>
+        </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {clientes?.map((cliente) => (

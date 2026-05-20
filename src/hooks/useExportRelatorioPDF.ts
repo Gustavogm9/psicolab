@@ -133,7 +133,7 @@ export const useExportRelatorioPDF = () => {
         doc.setFontSize(8);
         doc.setTextColor(150, 150, 150);
         doc.text(
-          `Página ${i} de ${pageCount} - Gerado por PsiColab`,
+          `Página ${i} de ${pageCount} - Gerado por MenteMetrics`,
           doc.internal.pageSize.getWidth() / 2,
           doc.internal.pageSize.getHeight() - 10,
           { align: 'center' }

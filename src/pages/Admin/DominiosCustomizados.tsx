@@ -214,22 +214,20 @@ export default function DominiosCustomizados() {
           <DialogHeader>
             <DialogTitle>Aprovar Domínio</DialogTitle>
             <DialogDescription>
-              Configure o domínio no Lovable antes de aprovar
+              Confirmação manual de ativação de domínio no sistema
             </DialogDescription>
           </DialogHeader>
 
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Instruções:</strong>
-              <ol className="list-decimal ml-4 mt-2 space-y-1 text-sm">
-                <li>Acesse Lovable → Settings → Domains</li>
-                <li>Clique em "Connect Domain"</li>
-                <li>Adicione o domínio: <code className="font-mono bg-muted px-1 rounded">{dominioSelecionado?.dominio}</code></li>
-                <li>Use o token de verificação: <code className="font-mono bg-muted px-1 rounded text-xs break-all">{dominioSelecionado?.token_verificacao}</code></li>
-                <li>Aguarde a ativação no Lovable</li>
-                <li>Clique em "Aprovar" abaixo quando o domínio estiver ativo</li>
-              </ol>
+              <strong>Informação sobre Vercel:</strong>
+              <p className="mt-2 text-sm">
+                A integração com a Vercel é 100% automatizada. O domínio <code className="font-mono bg-muted px-1 rounded">{dominioSelecionado?.dominio}</code> é configurado e ativado dinamicamente quando as DNS propagam.
+              </p>
+              <p className="mt-2 text-sm">
+                Use esta aprovação manual apenas como contingência ou se desejar forçar o status ativo no banco de dados.
+              </p>
             </AlertDescription>
           </Alert>
 
@@ -385,7 +383,7 @@ const DominioCard = ({ dominio, onAprovar, onRejeitar }: any) => {
                   <strong>SSL:</strong> {dominio.ssl_erro_mensagem}
                   {dominio.ssl_status === 'provisionando' && (
                     <p className="mt-1 text-muted-foreground">
-                      O certificado SSL é provisionado automaticamente pelo Lovable. Aguarde até 24h.
+                      O certificado SSL é provisionado automaticamente pela Vercel.
                     </p>
                   )}
                 </AlertDescription>

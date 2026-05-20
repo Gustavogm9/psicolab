@@ -94,7 +94,7 @@ export const SEOMetaTags = ({ perfil, pageUrl, servicos = [], depoimentos = [] }
     "image": seoImage,
     "publisher": {
       "@type": "Organization",
-      "name": "PsiColab",
+      "name": "MenteMetrics",
       "url": baseUrl,
     },
     "inLanguage": "pt-BR",
@@ -205,7 +205,7 @@ export const SEOMetaTags = ({ perfil, pageUrl, servicos = [], depoimentos = [] }
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:locale" content="pt_BR" />
-      <meta property="og:site_name" content="PsiColab" />
+      <meta property="og:site_name" content="MenteMetrics" />
       <meta property="profile:first_name" content={perfil.titulo_profissional?.split(' ')[0] || perfil.slug} />
       {perfil.titulo_profissional?.split(' ').length > 1 && (
         <meta property="profile:last_name" content={perfil.titulo_profissional?.split(' ').slice(1).join(' ')} />
@@ -218,7 +218,7 @@ export const SEOMetaTags = ({ perfil, pageUrl, servicos = [], depoimentos = [] }
       <meta name="twitter:description" content={seoDescription} />
       <meta name="twitter:image" content={seoImage} />
       <meta name="twitter:image:alt" content={seoTitle} />
-      <meta name="twitter:creator" content="@psicolab" />
+      <meta name="twitter:creator" content="@mentemetrics" />
 
       {/* Additional SEO tags */}
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />

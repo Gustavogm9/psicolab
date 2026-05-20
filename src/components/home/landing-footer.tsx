@@ -15,7 +15,7 @@ export function LandingFooter() {
       title: "Empresa",
       links: [
         { label: "Sobre nós", href: "/sobre" },
-        { label: "Contato", href: "mailto:contato@psicolab.com" },
+        { label: "Contato", href: "mailto:contato@mentemetrics.com.br" },
       ]
     },
     {
@@ -42,9 +42,9 @@ export function LandingFooter() {
           <div className="col-span-2 space-y-4">
             <Link to="/" className="flex items-center gap-2 font-bold text-xl">
               <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                P
+                M
               </div>
-              <span>PsicoLab</span>
+              <span>MenteMetrics</span>
             </Link>
             <p className="text-sm text-muted-foreground max-w-xs">
               Sistema completo para psicólogos que atuam com empresas: 
@@ -53,7 +53,7 @@ export function LandingFooter() {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="h-4 w-4" />
-                <span>contato@psicolab.com</span>
+                <span>contato@mentemetrics.com.br</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4" />
@@ -108,7 +108,7 @@ export function LandingFooter() {
         <div className="pt-8 border-t">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} PsicoLab. Todos os direitos reservados.
+              © {new Date().getFullYear()} MenteMetrics. Todos os direitos reservados.
             </p>
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">Feito com ❤️ para psicólogos</span>

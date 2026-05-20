@@ -1,0 +1,9 @@
+ativo;categoria;consultora_id;created_at;custo_estimado;descricao;duracao_estimada;esforco;id;impacto;ordem;template;titulo
+true;Comunicação;;2025-11-05 21:16:20.343012+00;;Workshop focado em melhorar a comunicação entre equipes e departamentos;1;medio;b3a742c3-f37c-434d-9ce0-9e8e85bdefbe;alto;1;false;Workshop de Comunicação
+true;Engajamento;;2025-11-05 21:16:20.343012+00;;Implementar sistema de reconhecimento e recompensa para colaboradores;30;baixo;cf1353e4-3d4c-4386-89e4-81a2901b7283;alto;2;false;Programa de Reconhecimento
+true;Clima Organizacional;;2025-11-05 21:16:20.343012+00;;Realizar pesquisa de clima organizacional a cada 3 meses;7;baixo;e4b040db-bb9c-4d9a-b5ec-197145127837;medio;3;false;Pesquisa de Clima Trimestral
+true;Liderança;;2025-11-05 21:16:20.343012+00;;Estabelecer rotina de reuniões individuais entre líderes e liderados;60;medio;5985f780-3431-4e7d-9651-7169efb755b7;alto;4;false;Reuniões 1:1 Estruturadas
+true;Desenvolvimento;;2025-11-05 21:16:20.343012+00;;Criar programa de mentoria interna para desenvolvimento de talentos;90;alto;051097af-3d02-4d29-972d-f3af1b9f2f2a;alto;5;false;Programa de Mentoria
+true;Ambiente;;2025-11-05 21:16:20.343012+00;;Melhorar o ambiente físico de trabalho para aumentar produtividade;30;alto;d945361e-a6dc-4fa8-853b-3a52647be5e5;medio;6;false;Redesign do Espaço de Trabalho
+true;Cultura;;2025-11-05 21:16:20.343012+00;;Implementar cultura de feedback regular e construtivo;45;medio;def75435-f449-4436-b0a5-c766f5fab3e1;alto;7;false;Política de Feedback Contínuo
+true;Bem-estar;;2025-11-05 21:16:20.343012+00;;Ações focadas em saúde física e mental dos colaboradores;60;medio;4f8ffed6-dfb1-453a-b7ad-7e8100098fd6;alto;8;false;Programa de Bem-estar

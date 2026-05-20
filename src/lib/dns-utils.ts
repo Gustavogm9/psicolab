@@ -10,13 +10,14 @@ export interface TipoDominio {
 }
 
 export interface InstrucaoDNS {
-  tipo: 'A' | 'TXT';
+  tipo: 'A' | 'CNAME' | 'TXT';
   nome: string;
   valor: string;
   descricao: string;
 }
 
-const LOVABLE_IP = '185.158.133.1';
+const VERCEL_IP = '76.76.21.21';
+const VERCEL_CNAME = 'cname.vercel-dns.com';
 
 /**
  * Detecta se o domínio é raiz (example.com) ou subdomínio (psi.example.com)
@@ -62,36 +63,43 @@ export function gerarInstrucoesDNS(
   const instrucoes: InstrucaoDNS[] = [];
   
   if (info.tipo === 'raiz') {
-    // Domínio raiz: precisa de @ e www
+    // Domínio raiz: precisa de @ (A) e www (CNAME)
     instrucoes.push({
       tipo: 'A',
       nome: '@',
-      valor: LOVABLE_IP,
-      descricao: 'Registro A para o domínio raiz',
+      valor: VERCEL_IP,
+      descricao: 'Registro A para o domínio raiz (aponta para o Anycast DNS da Vercel)',
     });
     
     instrucoes.push({
-      tipo: 'A',
+      tipo: 'CNAME',
       nome: 'www',
-      valor: LOVABLE_IP,
-      descricao: 'Registro A para www (subdomínio)',
+      valor: VERCEL_CNAME,
+      descricao: 'Registro CNAME para www redirecionar para a Vercel',
     });
   } else {
-    // Subdomínio: precisa apenas do subdomínio específico
+    // Subdomínio: precisa apenas do subdomínio específico (CNAME)
     instrucoes.push({
-      tipo: 'A',
+      tipo: 'CNAME',
       nome: info.subdominio!,
-      valor: LOVABLE_IP,
-      descricao: `Registro A para o subdomínio "${info.subdominio}"`,
+      valor: VERCEL_CNAME,
+      descricao: `Registro CNAME para o subdomínio "${info.subdominio}" (aponta para a Vercel)`,
     });
   }
   
   // TXT é opcional, mas acelera aprovação
   instrucoes.push({
     tipo: 'TXT',
+    nome: '_mentemetrics',
+    valor: `mentemetrics_verify=${tokenVerificacao}`,
+    descricao: 'Registro TXT para verificação de propriedade do MenteMetrics (Recomendado)',
+  });
+  
+  instrucoes.push({
+    tipo: 'TXT',
     nome: '_psicolab',
     valor: `psicolab_verify=${tokenVerificacao}`,
-    descricao: 'Registro TXT para verificação de propriedade (opcional - acelera aprovação)',
+    descricao: 'Registro TXT legado para verificação de propriedade do PsicoLab (Legado / Compatível)',
   });
   
   return instrucoes;

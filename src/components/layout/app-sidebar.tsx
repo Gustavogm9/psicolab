@@ -87,7 +87,7 @@ export function AppSidebar({ userType }: AppSidebarProps) {
     enabled: !!effectiveUserId,
   });
 
-  const displayName = config?.nome_empresa || "PsiColab";
+  const displayName = config?.nome_empresa || "MenteMetrics";
   const displayLogo = config?.logo_url;
 
   // Verificar se usuário é admin

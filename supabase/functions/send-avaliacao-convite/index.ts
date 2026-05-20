@@ -8,7 +8,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const APP_URL = Deno.env.get("APP_URL") ?? "https://psicosystem.guilds.com.br";
+const APP_URL = Deno.env.get("APP_URL") ?? "https://mentemetrics.com.br";
 const PLATFORM_GMAIL_USER = Deno.env.get("PLATFORM_GMAIL_USER") ?? "";
 const PLATFORM_GMAIL_APP_PASSWORD = Deno.env.get("PLATFORM_GMAIL_APP_PASSWORD") ?? "";
 

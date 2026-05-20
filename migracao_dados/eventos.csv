@@ -1,0 +1,48 @@
+cliente_id;consultora_id;created_at;data_hora;id;lead_id;local;observacoes;status;tipo;titulo
+98523df9-e639-4942-9ca8-a8365d95d8de;9f4a0435-873d-4310-9c12-5c48eadbc7e3;2026-01-31 03:02:26.730811+00;2026-01-31 03:02:08.878+00;550e42cc-cb20-4866-8630-47bac253fdb3;bf7997b5-ba15-404c-8771-c7abfc194366;;;realizado;Apresentação;ASDASD
+40a3e7f8-2627-48c6-80b6-79e29961b943;cad3eb84-a3ad-4f90-a9c4-c7f9ffdf87af;2025-10-17 11:41:17.44602+00;2025-10-19 11:41:17.44602+00;ac961e54-06d4-407a-9f4e-be73ac016184;;Sala de Treinamento;;agendado;Workshop;Workshop de Feedback
+1b0b7bce-42c3-4473-9fa8-a7e54cdbc81d;cad3eb84-a3ad-4f90-a9c4-c7f9ffdf87af;2025-10-17 11:41:17.44602+00;2025-10-22 11:41:17.44602+00;1c389e30-21e9-4c20-9ce5-ee65a8b73fcc;;Online (Teams);;agendado;Reunião;Reunião de Apresentação
+811be139-9037-46b0-bddd-a62055f37438;b990df2a-604e-41cd-a3b4-31844fc4035e;2025-11-10 12:49:37.961338+00;2025-11-11 12:48:00+00;0ea91ec1-94a8-4110-a67a-e5bb80c0a165;77f659fc-31ac-4396-87ab-b4fdbbbe43bc;sala 3;teste;agendado;Consultoria;Teste
+811be139-9037-46b0-bddd-a62055f37438;b990df2a-604e-41cd-a3b4-31844fc4035e;2025-11-10 12:56:41.414108+00;2025-11-10 09:00:00+00;95b691f0-0ba2-4e53-94bd-91274788eabb;;;"Início da intervenção: teste
+
+[intervencao_id:922291e2-3883-4032-8b07-86ad809ad321]";agendado;Consultoria;🎯 Início: teste
+811be139-9037-46b0-bddd-a62055f37438;b990df2a-604e-41cd-a3b4-31844fc4035e;2025-11-10 12:56:55.952384+00;2025-11-10 17:00:46.563+00;d8e39d2b-5c80-4ad7-b0b3-cf8ac2dfadb3;;sala 3;"teste
+
+[intervencao_id:922291e2-3883-4032-8b07-86ad809ad321]";agendado;Reunião;Reunião: teste
+811be139-9037-46b0-bddd-a62055f37438;b990df2a-604e-41cd-a3b4-31844fc4035e;2025-11-10 15:50:15.076057+00;2025-10-02 09:00:00+00;eb3e94f1-7631-423d-b6d1-8420e9517cb4;;;"Início da intervenção: Incentivar os funcionários e ajuda-los a ver a situação por outra ótica
+
+[intervencao_id:76a83d92-6e07-458c-b5f3-6728df9d6539]";agendado;Consultoria;🎯 Início: Ação de Melhora de Clima
+811be139-9037-46b0-bddd-a62055f37438;b990df2a-604e-41cd-a3b4-31844fc4035e;2025-11-10 15:52:21.264547+00;2025-11-28 17:00:00+00;fbfdf0ee-55cd-4452-bb1d-d7d249409eee;;Chacará Klabin;"Fazer uma festa que é uma analogia ao clima quente de vendas que temos tendo, junto com o clima quente de rio preto, para refrescar os funcionários para o fim de ano, e os planos pro ano que vem.
+
+[intervencao_id:922291e2-3883-4032-8b07-86ad809ad321]";agendado;Follow-up;Churrasco com Piscina
+f4927004-1222-4b0a-9cdb-7b9a8e691443;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-03-16 15:45:57.889948+00;2026-03-07 12:50:00+00;158a7102-4e35-41d3-94d2-f5dcbe16c516;b87a39f2-544f-406e-bcef-4b692fa18621;Sala Cinema Cine Araújo - Shopping Center Fernandópolis;;realizado;Palestra;Palestra Grupo Dibral - Workshop Saúde Mental
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-03-16 15:46:53.516433+00;2026-03-16 19:00:10.148+00;9fcaf865-01f3-4d38-84a4-2559b209e9fb;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;MV6 Group Presencial;;realizado;Reunião;Reunião de Kick Off
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-04-24 20:18:50.506517+00;2026-05-04 12:00:00+00;02cf8b4a-4551-43cf-889f-38084fcd79d2;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;Presencial;"☐	Observação de: pressão por metas, comunicação entre equipes, sobrecarga de trabalho, ambiente físico
+☐	Registro fotográfico do ambiente (com autorização) e anotações de campo
+☐	Identificação preliminar de perigos psicossociais: sobrecarga, conflitos interpessoais, falta de autonomia, assédio, etc.
+";agendado;Follow-up;Visita de Campo (Observação e Coleta de Informações)
+3d61025b-9ba4-471b-9c89-90739656eec7;930c44b5-3b73-4770-a9af-ac72471c65cc;2025-12-01 17:57:06.78455+00;2025-12-02 09:00:00+00;2d41a068-489d-4933-9bb4-b3001ab3877a;;;"Início da intervenção: Treinamento Comunicação assertiva
+
+[intervencao_id:77b8a774-a4fb-4ecb-8241-dc8e6ac22dfa]";agendado;intervencao;🎯 Início: Treinamento Comunicação assertiva
+07981e3f-fcd2-46f6-9ba4-866be6647059;930c44b5-3b73-4770-a9af-ac72471c65cc;2025-12-09 12:16:50.252986+00;2025-12-09 12:16:37.398+00;1d9473e2-86da-4cac-8f64-16018e1267ed;;;;agendado;Follow-up;Renião
+3d61025b-9ba4-471b-9c89-90739656eec7;930c44b5-3b73-4770-a9af-ac72471c65cc;2025-12-01 17:58:35.608838+00;2025-12-01 17:00:36.474+00;b348c398-ff90-420b-87f6-d314a076d782;;;"Treinamento Comunicação assertiva
+
+[intervencao_id:959cefb0-1a4a-4669-807f-530723cdcb1a]";realizado;reuniao;Reunião: Treinamento Comunicação assertiva
+;9f4a0435-873d-4310-9c12-5c48eadbc7e3;2026-01-31 02:23:36.299667+00;2026-01-30 12:00:49.825+00;c23479e5-f262-4871-a507-1713605b51dd;a37e545b-3c98-4c95-ba4b-2b14fa55d9a8;SAFAF;DSCASD;realizado;Workshop;Follow-up com DASDAA
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-04-24 20:22:32.788279+00;2026-05-04 19:00:00+00;dda626c0-c245-4034-b29f-f8a875bc5295;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;https://cal.com/sodreia/rodasdeconversa;☐	Condução de rodas de conversa individuais;agendado;Follow-up;Agendamento de Rodas de Conversa
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-04-24 20:12:25.924861+00;2026-04-28 18:00:00+00;adc77959-d87d-48d3-98a0-4983098f7d16;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;Presencial;"*Sprint 1: VISTORIA - DIAGNÓSTICO INICIAL*
+*Etapa: Aplicação do Questionário Digital e Rodas de Conversa*
+ 
+Até o final desta semana o objetivo é concluir as seguintes etapas:
+
+☐	Aplicação de questionários de percepção de riscos (instrumento validado)
+☐	Registro anonimizado das informações coletadas 
+☐	Início da consolidação dos dados coletados / cruzamento de dados com documentos anteriormente enviados
+☐	Agendamento de rodas de conversa (via reunião online - google meet) com setores (máximo de 5 pessoas por grupo)
+
+__________
+
+>>> Verificar como está o planejamento de contratações e como está o planejamento em relação a Joyce;
+>>> Quais são as funções atribuídas para o Denner e para o Danilso como sócios?";realizado;Reunião;Reunião de Alinhamento Líderes MV6
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-04-24 20:24:00.429576+00;2026-05-04 17:00:00+00;15417f71-7788-4920-ab45-2f48d1dac71c;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;https://cal.com/sodreia/40min;;agendado;Follow-up;Entrevistas Individuais com Lideranças e Colaboradores-Chave de cada setor
+6dc18dda-7625-4b19-bc9d-d7ee978a887f;f2a5b9f7-815e-487a-adf6-72ff0e4064dd;2026-04-24 20:25:42.528781+00;2026-05-04 14:00:00+00;9e6f60db-ec5d-4763-8a25-1f0a6b45cfd3;5e59b2b7-ba0b-4a3d-9236-d5e6150be956;Online Individualmente;Enviar os links para cada e-mail depois de já ter explicado para todos sobre a importância do preenchimento do questionário e para que serve.;agendado;Avaliação;Aplicação do Questionário

@@ -68,12 +68,12 @@ export function HeroSection({ onViewChange }: HeroSectionProps) {
             ) : (
               <div className="w-10 h-10 bg-gradient-to-br from-primary to-accent rounded-xl flex items-center justify-center">
                 <span className="text-white font-bold text-lg">
-                  {config?.nome_empresa?.charAt(0) || 'P'}
+                  {config?.nome_empresa?.charAt(0) || 'M'}
                 </span>
               </div>
             )}
             <h1 className="text-2xl font-bold text-gradient">
-              {config?.nome_empresa || 'PsiColab'}
+              {config?.nome_empresa || 'MenteMetrics'}
             </h1>
           </div>
           <div className="flex items-center space-x-4">

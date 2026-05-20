@@ -1091,7 +1091,7 @@ export function ConfigurarPerfilPublico() {
                         <>
                           {" "}em:
                           <span className="font-mono text-primary ml-1">
-                            psicolab.com/perfil/{perfil.slug}
+                            mentemetrics.com.br/perfil/{perfil.slug}
                           </span>
                         </>
                       )}
@@ -1160,7 +1160,7 @@ export function ConfigurarPerfilPublico() {
                         }}
                       />
                       <p className="text-xs text-muted-foreground">
-                        Sua página será: <span className="font-mono text-primary">psicolab.com/perfil/{perfil.slug || 'seu-nome'}</span>
+                        Sua página será: <span className="font-mono text-primary">mentemetrics.com.br/perfil/{perfil.slug || 'seu-nome'}</span>
                       </p>
                     </div>
 

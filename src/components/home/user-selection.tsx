@@ -14,15 +14,15 @@ export function UserSelection({ onViewChange }: UserSelectionProps) {
         <div className="text-center space-y-6 mb-12">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-hover rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">P</span>
+              <span className="text-white font-bold">M</span>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              PsiColab
+              MenteMetrics
             </span>
           </div>
           
           <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            Bem-vindo(a) ao PsiColab
+            Bem-vindo(a) ao MenteMetrics
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             Selecione seu perfil para acessar a plataforma de consultoria psicológica corporativa

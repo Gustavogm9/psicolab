@@ -28,12 +28,15 @@ export const useActiveDomain = () => {
 
       const currentHostname = window.location.hostname;
 
-      // Ignorar localhost, domínios do Lovable e domínio padrão do sistema
+      // Ignorar localhost, domínios do Lovable, domínios da Vercel e domínio padrão do sistema
       if (
         currentHostname === 'localhost' ||
         currentHostname.includes('lovable.app') ||
+        currentHostname.includes('vercel.app') ||
         currentHostname.includes('127.0.0.1') ||
-        currentHostname === 'psicosystem.guilds.com.br'
+        currentHostname === 'psicosystem.guilds.com.br' ||
+        currentHostname === 'mentemetrics.com.br' ||
+        currentHostname === 'mentemetrics.com'
       ) {
         return {
           isCustomDomain: false,

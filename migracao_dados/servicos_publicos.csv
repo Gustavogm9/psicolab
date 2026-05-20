@@ -1,0 +1,11 @@
+created_at;descricao;duracao;icone;id;modalidade;ordem;perfil_publico_id;preco;titulo
+2025-11-21 23:24:21.278556+00;ftft;50;Briefcase;7872a929-312d-4eb2-b9fc-0b0b50cd9f78;presencial;1;17df36a9-2e4e-4e38-842a-9835d291a8cd;250;asdasd
+2025-11-21 23:24:29.722381+00;asdasd;80;Briefcase;1db1e8c6-ea64-41ae-b6e1-8386ab9e7af1;online;2;17df36a9-2e4e-4e38-842a-9835d291a8cd;10;sadasd
+2025-12-19 19:12:32.876352+00;Workshop focado em melhorar a comunicação entre equipes e departamentos;1;Briefcase;685385dc-03fc-4486-8375-fa56c6335ed3;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Workshop de Comunicação
+2025-12-19 19:12:33.121922+00;Implementar sistema de reconhecimento e recompensa para colaboradores;30;Briefcase;eb025db3-16f3-4546-94a5-fc21d971800f;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Programa de Reconhecimento
+2025-12-19 19:12:33.388+00;Realizar pesquisa de clima organizacional a cada 3 meses;7;Briefcase;be650456-3d5d-4795-a633-72c6c918fd5f;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Pesquisa de Clima Trimestral
+2025-12-19 19:12:33.614154+00;Estabelecer rotina de reuniões individuais entre líderes e liderados;60;Briefcase;1a8e0e5f-8e55-48f1-aaf6-b798e9d6b773;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Reuniões 1:1 Estruturadas
+2025-12-19 19:12:33.838198+00;Criar programa de mentoria interna para desenvolvimento de talentos;90;Briefcase;16cc501a-4447-4b09-a7e4-bae54fb0d483;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Programa de Mentoria
+2025-12-19 19:12:34.043356+00;Melhorar o ambiente físico de trabalho para aumentar produtividade;30;Briefcase;49239c89-5bea-446b-9f51-b8df1dd38e06;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Redesign do Espaço de Trabalho
+2025-12-19 19:12:34.250455+00;Implementar cultura de feedback regular e construtivo;45;Briefcase;6a50b7bc-6883-4bd5-bcf1-f1eaf8650167;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Política de Feedback Contínuo
+2025-12-19 19:12:34.45199+00;Ações focadas em saúde física e mental dos colaboradores;60;Briefcase;f656d2c6-71ba-434e-95a1-5f6ab282d9a9;;0;5e200087-a353-4237-a68c-d2622a67cac3;;Programa de Bem-estar

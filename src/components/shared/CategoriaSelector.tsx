@@ -66,8 +66,19 @@ export const CategoriaSelector = ({
   const [novoNome, setNovoNome] = useState('');
   const [novaCor, setNovaCor] = useState('#6366f1');
 
-  const { data: categorias = [], isLoading } = useCategoriasPersonalizadas({ tipo });
+  const { data: categoriasRaw = [], isLoading } = useCategoriasPersonalizadas({ tipo });
   const { criarCategoria } = useCategoriasMutations();
+
+  // Deduplicar categorias por nome para evitar duplicados da base de dados ou do fluxo
+  const categorias = categoriasRaw.reduce((acc: typeof categoriasRaw, current) => {
+    const exists = acc.some(
+      item => item.nome.trim().toLowerCase() === current.nome.trim().toLowerCase()
+    );
+    if (!exists) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
 
   const handleCriarCategoria = async () => {
     if (!novoNome.trim()) return;
@@ -94,25 +105,27 @@ export const CategoriaSelector = ({
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between"
+            className="w-full justify-between overflow-hidden text-left"
           >
-            {categoriaSelecionada ? (
-              <Badge
-                variant="secondary"
-                style={{ 
-                  backgroundColor: categoriaSelecionada.isSystem ? categoriaSelecionada.cor : `${categoriaSelecionada.cor}40`,
-                  color: categoriaSelecionada.isSystem ? 'white' : '#374151'
-                }}
-                className={cn("font-normal", categoriaSelecionada.isSystem && "font-medium")}
-              >
-                {categoriaSelecionada.nome}
-              </Badge>
-            ) : (
-              <span className="text-muted-foreground">Selecione uma categoria...</span>
-            )}
+            <div className="flex items-center gap-2 truncate max-w-full">
+              {categoriaSelecionada ? (
+                <Badge
+                  variant="secondary"
+                  style={{ 
+                    backgroundColor: categoriaSelecionada.isSystem ? categoriaSelecionada.cor : `${categoriaSelecionada.cor}40`,
+                    color: categoriaSelecionada.isSystem ? 'white' : '#374151'
+                  }}
+                  className={cn("font-normal truncate max-w-[130px] sm:max-w-[180px]", categoriaSelecionada.isSystem && "font-medium")}
+                >
+                  {categoriaSelecionada.nome}
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground truncate">Selecione uma categoria...</span>
+              )}
+            </div>
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0 bg-background" align="start">
+        <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[240px] max-w-[320px] p-0 bg-background" align="start">
           <Command>
             <CommandInput placeholder="Buscar categoria..." />
             <CommandList>
@@ -143,7 +156,7 @@ export const CategoriaSelector = ({
                           backgroundColor: categoria.isSystem ? categoria.cor : `${categoria.cor}40`,
                           color: categoria.isSystem ? 'white' : '#374151'
                         }}
-                        className={cn("font-normal", categoria.isSystem && "font-medium")}
+                        className={cn("font-normal truncate max-w-[180px]", categoria.isSystem && "font-medium")}
                       >
                         {categoria.nome}
                       </Badge>
@@ -179,7 +192,7 @@ export const CategoriaSelector = ({
                               backgroundColor: categoria.isSystem ? categoria.cor : `${categoria.cor}40`,
                               color: categoria.isSystem ? 'white' : '#374151'
                             }}
-                            className={cn("font-normal", categoria.isSystem && "font-medium")}
+                            className={cn("font-normal truncate max-w-[180px]", categoria.isSystem && "font-medium")}
                           >
                             {categoria.nome}
                           </Badge>

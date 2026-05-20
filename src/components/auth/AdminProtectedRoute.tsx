@@ -3,6 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { WhiteLabelProvider } from "@/contexts/WhiteLabelContext";
+import { ForcePasswordChange } from "./ForcePasswordChange";
 
 interface AdminProtectedRouteProps {
   children: ReactNode;
@@ -20,12 +21,12 @@ export function AdminProtectedRoute({ children }: AdminProtectedRouteProps) {
         return;
       }
 
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", session.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
 
       setIsAdmin(!error && data !== null);
     };
@@ -45,6 +46,15 @@ export function AdminProtectedRoute({ children }: AdminProtectedRouteProps) {
 
   if (!session) {
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
+  }
+
+  // Interceptar caso seja exigido troca de senha obrigatória
+  const forcePasswordChange = 
+    session?.user?.user_metadata?.force_password_change === true || 
+    (session?.user?.user_metadata?.migrated === true && session?.user?.user_metadata?.force_password_change !== false);
+
+  if (forcePasswordChange) {
+    return <ForcePasswordChange />;
   }
 
   if (!isAdmin) {

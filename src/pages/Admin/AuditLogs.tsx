@@ -250,7 +250,7 @@ export default function AuditLogs() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {logsData?.logs.map((log) => (
+              {(logsData?.logs || []).map((log) => (
                 <Collapsible
                   key={log.id}
                   open={expandedRow === log.id}
@@ -314,7 +314,7 @@ export default function AuditLogs() {
                 </Collapsible>
               ))}
 
-              {!isLoading && (!logsData?.logs || logsData.logs.length === 0) && (
+               {!isLoading && (!logsData?.logs || logsData.logs.length === 0) && (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <Search className="h-12 w-12 mx-auto text-muted-foreground mb-2" />

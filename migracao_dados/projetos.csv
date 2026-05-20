@@ -1,0 +1,4 @@
+cliente_id;consultora_id;created_at;data_fim;data_inicio;id;nome;participantes_responderam;participantes_total;prioridade;progresso;status;tipo;updated_at
+40a3e7f8-2627-48c6-80b6-79e29961b943;cad3eb84-a3ad-4f90-a9c4-c7f9ffdf87af;2025-10-17 11:41:17.44602+00;2025-12-31;2025-10-02;03b4814b-f92f-4117-9139-28079144a521;Piloto 90 dias - TechCorp Brasil;163;250;high;65;Coleta;Piloto 90 dias;2025-10-17 11:41:17.44602+00
+1b0b7bce-42c3-4473-9fa8-a7e54cdbc81d;cad3eb84-a3ad-4f90-a9c4-c7f9ffdf87af;2025-10-17 11:41:17.44602+00;2026-09-17;2025-09-17;be70bb98-a8f3-4ddd-980c-16cc67b9df4c;Programa Anual - Indústria Silva & Co;425;500;medium;45;Análise;Programa Anual;2025-10-17 11:41:17.44602+00
+a65398cf-6ee1-4ec9-b0c8-426d5f03743d;cad3eb84-a3ad-4f90-a9c4-c7f9ffdf87af;2025-10-17 11:41:17.44602+00;2025-10-22;2025-09-22;79043400-c263-4f0b-96dc-1cb6910a31f2;Check-up P0 - Serviços Premium;118;120;low;90;Relatório;Check-up P0;2025-10-17 11:41:17.44602+00

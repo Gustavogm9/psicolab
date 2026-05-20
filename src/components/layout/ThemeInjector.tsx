@@ -133,12 +133,12 @@ export function ThemeInjector() {
 
     return () => {
       // Cleanup ao desmontar
-      document.title = "PsiColab - Plataforma de Consultoria Psicológica Corporativa";
+      document.title = "MenteMetrics - Inteligência e Saúde Mental Organizacional";
       
       const faviconLink = document.querySelector('link[rel="icon"]') as HTMLLinkElement;
       if (faviconLink) {
-        faviconLink.href = '/favicon.png';
-        faviconLink.type = 'image/png';
+        faviconLink.href = '/favicon.svg';
+        faviconLink.type = 'image/svg+xml';
       }
       
       root.style.removeProperty("--primary");

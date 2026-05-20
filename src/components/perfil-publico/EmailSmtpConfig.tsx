@@ -168,7 +168,7 @@ export function EmailSmtpConfig() {
                             <li>Acesse <strong>myaccount.google.com</strong> no Gmail que deseja usar</li>
                             <li>Ative a <strong>Verificação em 2 etapas</strong> (se ainda não tiver)</li>
                             <li>Vá em <strong>Segurança → App Passwords</strong></li>
-                            <li>Selecione "Outro (nome personalizado)", coloque "PsiColab"</li>
+                            <li>Selecione "Outro (nome personalizado)", coloque "MenteMetrics"</li>
                             <li>Copie a senha de 16 caracteres gerada e cole aqui</li>
                         </ol>
                         <Button

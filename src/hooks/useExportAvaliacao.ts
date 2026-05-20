@@ -2,6 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { getUserFriendlyError } from '@/lib/error-messages';
+import { Database } from '@/integrations/supabase/types';
+
+type Avaliacao = Database['public']['Tables']['avaliacoes']['Row'] & {
+  cliente?: { nome: string } | null;
+};
+type Participante = Database['public']['Tables']['avaliacoes_participantes']['Row'];
+type Questao = Database['public']['Tables']['avaliacoes_questoes']['Row'];
 
 export const useExportAvaliacao = () => {
   const exportarCSV = async (avaliacaoId: string) => {
@@ -42,8 +49,10 @@ export const useExportAvaliacao = () => {
       csvContent += "Avaliação: " + avaliacao.nome + "\n";
       csvContent += "Tipo: " + avaliacao.tipo + "\n";
       csvContent += "Status: " + avaliacao.status + "\n";
-      if (avaliacao.cliente?.nome) {
-        csvContent += "Cliente: " + avaliacao.cliente.nome + "\n";
+      
+      const clienteNome = (avaliacao as any).cliente?.nome;
+      if (clienteNome) {
+        csvContent += "Cliente: " + clienteNome + "\n";
       }
       csvContent += "Data Início: " + (avaliacao.data_inicio ? new Date(avaliacao.data_inicio).toLocaleDateString('pt-BR') : 'N/A') + "\n";
       csvContent += "Data Fim: " + (avaliacao.data_fim ? new Date(avaliacao.data_fim).toLocaleDateString('pt-BR') : 'N/A') + "\n";
@@ -55,7 +64,7 @@ export const useExportAvaliacao = () => {
       csvContent += "RESPOSTAS DOS PARTICIPANTES\n\n";
       
       if (participantes && participantes.length > 0) {
-        participantes.forEach((participante: any, idx: number) => {
+        participantes.forEach((participante: Participante, idx: number) => {
           csvContent += `\nParticipante ${idx + 1}\n`;
           csvContent += "Nome: " + (participante.nome || 'Anônimo') + "\n";
           csvContent += "Email: " + (participante.email || 'N/A') + "\n";
@@ -65,9 +74,9 @@ export const useExportAvaliacao = () => {
           
           if (participante.respostas) {
             csvContent += "\nRespostas:\n";
-            const respostas = participante.respostas as any;
+            const respostas = participante.respostas as Record<string, any>;
             
-            questoes?.forEach((questao: any) => {
+            questoes?.forEach((questao: Questao) => {
               const resposta = respostas[questao.id];
               csvContent += `"Questão: ${questao.pergunta}","Resposta: ${resposta || 'Não respondida'}"\n`;
             });
@@ -104,7 +113,7 @@ export const useExportAvaliacao = () => {
     }
   };
 
-  const exportarHistoricoCSV = async (avaliacoes: any[]) => {
+  const exportarHistoricoCSV = async (avaliacoes: Avaliacao[]) => {
     try {
       let csvContent = "data:text/csv;charset=utf-8,";
       
@@ -112,7 +121,7 @@ export const useExportAvaliacao = () => {
       csvContent += "Nome,Tipo,Status,Cliente,Data Início,Data Fim,Participantes Total,Participantes Responderam,Progresso (%)\n";
       
       // Dados
-      avaliacoes.forEach((avaliacao: any) => {
+      avaliacoes.forEach((avaliacao: Avaliacao) => {
         const linha = [
           avaliacao.nome,
           avaliacao.tipo,

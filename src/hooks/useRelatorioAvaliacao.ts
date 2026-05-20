@@ -1,5 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
+
+type RespostaPublica = Database['public']['Tables']['avaliacoes_respostas_publicas']['Row'];
+type Participante = Database['public']['Tables']['avaliacoes_participantes']['Row'];
+
+export interface RespostaCombinada {
+  id: string;
+  nome: string | null;
+  email: string | null;
+  setor: string | null;
+  cargo: string | null;
+  respostas: any;
+  data_resposta: string | null;
+  tipo: 'publica' | 'participante';
+}
 
 export const useRelatorioAvaliacao = (avaliacaoId: string | undefined) => {
   return useQuery({
@@ -25,8 +40,8 @@ export const useRelatorioAvaliacao = (avaliacaoId: string | undefined) => {
       if (participantesError) throw participantesError;
 
       // Combinar todas as respostas
-      const todasRespostas = [
-        ...(respostasPublicas || []).map((r: any) => ({
+      const todasRespostas: RespostaCombinada[] = [
+        ...(respostasPublicas || []).map((r: RespostaPublica) => ({
           id: r.id,
           nome: r.nome,
           email: r.email,
@@ -36,7 +51,7 @@ export const useRelatorioAvaliacao = (avaliacaoId: string | undefined) => {
           data_resposta: r.data_resposta,
           tipo: 'publica' as const,
         })),
-        ...(participantes || []).map((p: any) => ({
+        ...(participantes || []).map((p: Participante) => ({
           id: p.id,
           nome: p.nome,
           email: p.email,

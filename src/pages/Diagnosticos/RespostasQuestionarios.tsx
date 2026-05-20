@@ -466,19 +466,19 @@ const RespostasQuestionarios = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">Nome</p>
-                    <p className="font-medium">{respostaSelecionada.respondente.nome}</p>
+                    <p className="font-medium">{respostaSelecionada.nome}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Email</p>
-                    <p className="font-medium">{respostaSelecionada.respondente.email}</p>
+                    <p className="font-medium">{respostaSelecionada.email}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Telefone</p>
-                    <p className="font-medium">{respostaSelecionada.respondente.telefone || 'Não informado'}</p>
+                    <p className="font-medium">{respostaSelecionada.telefone || 'Não informado'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Data da Resposta</p>
-                    <p className="font-medium">{new Date(respostaSelecionada.dataFim).toLocaleDateString('pt-BR')}</p>
+                    <p className="font-medium">{respostaSelecionada.data_fim ? new Date(respostaSelecionada.data_fim).toLocaleDateString('pt-BR') : 'Em andamento'}</p>
                   </div>
                 </div>
               </div>
@@ -488,7 +488,7 @@ const RespostasQuestionarios = () => {
                 <h3 className="font-semibold mb-3">Resultados</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">{respostaSelecionada.scoreTotal}</p>
+                    <p className="text-2xl font-bold text-blue-600">{respostaSelecionada.score_total}</p>
                     <p className="text-sm text-gray-600">Score Total</p>
                   </div>
                   <div className="text-center">
@@ -512,7 +512,7 @@ const RespostasQuestionarios = () => {
                 <h3 className="font-semibold mb-3">Recomendações</h3>
                 <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
                   <p className="text-amber-800">
-                    Com base no score de {respostaSelecionada.scoreTotal} pontos, recomendamos:
+                    Com base no score de {respostaSelecionada.score_total} pontos, recomendamos:
                   </p>
                   <ul className="mt-2 space-y-1 text-amber-700">
                     <li>• Acompanhamento personalizado</li>

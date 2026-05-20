@@ -19,7 +19,7 @@ export default function ConfiguracoesMarca() {
     logo_url: null as string | null,
     cor_primaria: "#6366f1",
     cor_secundaria: "#8b5cf6",
-    titulo_sistema: "PsiColab",
+    titulo_sistema: "MenteMetrics",
     favicon_url: null as string | null,
   });
 
@@ -35,7 +35,7 @@ export default function ConfiguracoesMarca() {
         logo_url: config.logo_url,
         cor_primaria: config.cor_primaria,
         cor_secundaria: config.cor_secundaria,
-        titulo_sistema: config.titulo_sistema || "PsiColab",
+        titulo_sistema: config.titulo_sistema || "MenteMetrics",
         favicon_url: config.favicon_url,
       });
       setPreviewColors({
@@ -93,7 +93,7 @@ export default function ConfiguracoesMarca() {
       logo_url: null,
       cor_primaria: "#6366f1",
       cor_secundaria: "#8b5cf6",
-      titulo_sistema: "PsiColab",
+      titulo_sistema: "MenteMetrics",
       favicon_url: null,
     };
     setFormData(defaults);
@@ -236,10 +236,10 @@ export default function ConfiguracoesMarca() {
                     {formData.favicon_url ? (
                       <img src={formData.favicon_url} alt="Favicon" className="w-4 h-4 object-contain" />
                     ) : (
-                      <img src="/favicon.png" alt="Favicon padrão" className="w-4 h-4 object-contain" />
+                      <img src="/favicon.svg" alt="Favicon padrão" className="w-4 h-4 object-contain" />
                     )}
                     <span className="text-sm font-medium truncate max-w-[200px]">
-                      {formData.titulo_sistema || "PsiColab"}
+                      {formData.titulo_sistema || "MenteMetrics"}
                     </span>
                   </div>
                 </div>

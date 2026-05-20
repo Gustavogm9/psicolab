@@ -54,8 +54,19 @@ export const CategoriasManager = () => {
   const [nome, setNome] = useState('');
   const [cor, setCor] = useState('#6366f1');
 
-  const { data: categorias = [] } = useCategoriasPersonalizadas({ tipo: tipoAtivo });
+  const { data: categoriasRaw = [] } = useCategoriasPersonalizadas({ tipo: tipoAtivo });
   const { criarCategoria, atualizarCategoria, deletarCategoria } = useCategoriasMutations();
+
+  // Deduplicar categorias por nome para evitar problemas de sincronização ou base duplicada
+  const categorias = categoriasRaw.reduce((acc: Categoria[], current) => {
+    const exists = acc.some(
+      item => item.nome.trim().toLowerCase() === current.nome.trim().toLowerCase()
+    );
+    if (!exists) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
 
   const categoriasCustomizadas = categorias.filter(cat => !cat.isSystem);
   const categoriasSistema = categorias.filter(cat => cat.isSystem);

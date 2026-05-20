@@ -37,7 +37,7 @@ const defaultConfig: WhiteLabelConfig = {
   termos_uso: null,
   analytics_id: null,
   pixel_facebook: null,
-  titulo_sistema: "PsiColab",
+  titulo_sistema: "MenteMetrics",
   favicon_url: null,
   ativo: true,
 };

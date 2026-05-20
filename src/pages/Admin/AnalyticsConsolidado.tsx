@@ -85,7 +85,7 @@ export default function AnalyticsConsolidado() {
               <Eye className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totals?.visualizacoes.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">{(totals?.visualizacoes || 0).toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -95,7 +95,7 @@ export default function AnalyticsConsolidado() {
               <MousePointerClick className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totals?.cliques.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">{(totals?.cliques || 0).toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -105,7 +105,7 @@ export default function AnalyticsConsolidado() {
               <Mail className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totals?.leads.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">{(totals?.leads || 0).toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -115,7 +115,7 @@ export default function AnalyticsConsolidado() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totals?.diagnosticos.toLocaleString() || 0}</div>
+              <div className="text-2xl font-bold">{(totals?.diagnosticos || 0).toLocaleString()}</div>
             </CardContent>
           </Card>
 
@@ -125,7 +125,7 @@ export default function AnalyticsConsolidado() {
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{totals?.taxaConversao}%</div>
+              <div className="text-2xl font-bold">{totals?.taxaConversao || "0.00"}%</div>
             </CardContent>
           </Card>
         </div>

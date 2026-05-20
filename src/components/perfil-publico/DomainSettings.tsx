@@ -122,7 +122,7 @@ export const DomainSettings = ({ perfilPublicoId, slug }: DomainSettingsProps) =
           {alternativeUrl && (
             <div className="space-y-2">
               <label className="text-sm font-medium text-muted-foreground">
-                URL Alternativa (Lovable)
+                URL Alternativa (Vercel)
               </label>
               <div className="flex gap-2">
                 <Input value={alternativeUrl} readOnly className="font-mono text-sm bg-muted/50" />

@@ -33,7 +33,7 @@ export const DomainTrafficComparison = ({
         <Info className="h-4 w-4 text-blue-600" />
         <AlertDescription>
           <strong>Configure um domínio customizado</strong> para comparar o desempenho de tráfego entre 
-          seu domínio próprio e a URL padrão do Lovable.
+          seu domínio próprio e a URL padrão na Vercel.
         </AlertDescription>
       </Alert>
     );
@@ -218,7 +218,7 @@ export const DomainTrafficComparison = ({
               URL Padrão
             </CardTitle>
             <Badge variant="outline" className="bg-gray-500/10 text-gray-700 border-gray-500/20 w-fit">
-              lovable.app/perfil/...
+              mentemetrics.vercel.app/perfil/...
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">

@@ -74,6 +74,28 @@ async function verificarRegistroA(dominio: string, ipEsperado: string): Promise<
   }
 }
 
+async function verificarRegistroCNAME(dominio: string, cnameEsperado: string): Promise<VerificacaoResult> {
+  try {
+    const url = `https://dns.google/resolve?name=${dominio}&type=CNAME`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    const cnames = data.Answer?.map((a: any) => a.data.replace(/\.$/, '')) || [];
+    const sucesso = cnames.some((c: string) => c.toLowerCase().includes(cnameEsperado.toLowerCase()));
+
+    return {
+      tipo: 'dns_cname',
+      sucesso,
+      detalhes: { cnames, cnameEsperado },
+    };
+  } catch (error) {
+    return {
+      tipo: 'dns_cname',
+      sucesso: false,
+      detalhes: { error: error instanceof Error ? error.message : String(error) },
+    };
+  }
+}
 
 /**
  * Verifica registro TXT para token de verificação (OPCIONAL)
@@ -108,46 +130,6 @@ async function verificarRegistroTXT(
   }
 }
 
-
-async function verificarSSL(dominio: string): Promise<SSLVerificacaoResult> {
-  try {
-    // Tentar fazer requisição HTTPS
-    const response = await fetch(`https://${dominio}`, {
-      method: 'HEAD',
-      signal: AbortSignal.timeout(10000), // 10 segundos timeout
-    });
-
-    // Se chegou aqui, SSL está funcionando
-    const certInfo = response.headers.get('x-ssl-info');
-    
-    return {
-      status: 'ativo',
-      validoAte: undefined, // Lovable provisiona automaticamente
-    };
-  } catch (error: any) {
-    // Analisar tipo de erro
-    if (error.message?.includes('certificate') || error.message?.includes('SSL') || error.message?.includes('TLS')) {
-      return {
-        status: 'erro',
-        erroMensagem: 'Erro no certificado SSL. Aguarde o provisionamento automático (pode levar até 24h).',
-      };
-    }
-
-    if (error.message?.includes('timeout')) {
-      return {
-        status: 'provisionando',
-        erroMensagem: 'Timeout na verificação. SSL pode estar sendo provisionado.',
-      };
-    }
-
-    // Outros erros (pode ser que o DNS ainda não tenha propagado completamente)
-    return {
-      status: 'provisionando',
-      erroMensagem: error.message,
-    };
-  }
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -158,10 +140,14 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Detectar se é chamada automatizada (cron job) - múltiplas formas
+    // Credenciais da Vercel
+    const VERCEL_TOKEN = Deno.env.get('VERCEL_TOKEN');
+    const VERCEL_PROJECT_ID = Deno.env.get('VERCEL_PROJECT_ID');
+    const VERCEL_TEAM_ID = Deno.env.get('VERCEL_TEAM_ID');
+
+    // Detectar se é chamada automatizada (cron job)
     let isCronJob = req.headers.get('x-supabase-cron') !== null;
     
-    // Se não for pelo header, tentar detectar pelo body
     if (!isCronJob) {
       try {
         const bodyClone = await req.clone().text();
@@ -169,11 +155,9 @@ serve(async (req) => {
           const body = JSON.parse(bodyClone);
           isCronJob = body?.automated === true || body?.cronJob === true;
         } else {
-          // Body vazio também pode indicar cron
           isCronJob = true;
         }
       } catch {
-        // Se não conseguir parsear, assumir que não é cron
         isCronJob = false;
       }
     }
@@ -182,7 +166,6 @@ serve(async (req) => {
 
     if (isCronJob) {
       console.log('[CRON] Detectado chamada automatizada');
-      // Buscar todos os domínios pendentes ou com DNS configurado
       const { data, error } = await supabase
         .from('dominios_customizados')
         .select('*')
@@ -191,10 +174,8 @@ serve(async (req) => {
 
       if (error) throw error;
       dominiosParaVerificar = data || [];
-
       console.log(`[CRON] Verificando ${dominiosParaVerificar.length} domínios pendentes`);
     } else {
-      // Verificação manual de um domínio específico
       const { dominioId } = await req.json();
 
       if (!dominioId) {
@@ -213,7 +194,8 @@ serve(async (req) => {
       dominiosParaVerificar = [data];
     }
 
-    const LOVABLE_IP = '185.158.133.1';
+    const VERCEL_IP = '76.76.21.21';
+    const VERCEL_CNAME = 'cname.vercel-dns.com';
     const resultados = [];
 
     for (const dominio of dominiosParaVerificar) {
@@ -222,12 +204,65 @@ serve(async (req) => {
       const tipoDominio = detectarTipoDominio(dominio.dominio);
       console.log(`Tipo de domínio detectado: ${tipoDominio.tipo}`);
 
+      // 1. Tentar integrar com a API da Vercel se os tokens estiverem presentes
+      let vercelVerified = false;
+      let vercelConfig: any = null;
+      let usouVercelApi = false;
+
+      if (VERCEL_TOKEN && VERCEL_PROJECT_ID) {
+        usouVercelApi = true;
+        try {
+          console.log(`[Vercel] Tentando adicionar domínio ${dominio.dominio} no projeto ${VERCEL_PROJECT_ID}...`);
+          const addRes = await fetch(
+            `https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains${
+              VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""
+            }`,
+            {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${VERCEL_TOKEN}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ name: dominio.dominio }),
+            }
+          );
+          const addData = await addRes.json();
+          console.log(`[Vercel] POST /domains status: ${addRes.status}`);
+
+          console.log(`[Vercel] Obtendo status do domínio ${dominio.dominio}...`);
+          const getRes = await fetch(
+            `https://api.vercel.com/v9/projects/${VERCEL_PROJECT_ID}/domains/${
+              dominio.dominio
+            }${VERCEL_TEAM_ID ? `?teamId=${VERCEL_TEAM_ID}` : ""}`,
+            {
+              method: "GET",
+              headers: {
+                "Authorization": `Bearer ${VERCEL_TOKEN}`,
+              },
+            }
+          );
+          if (getRes.status === 200) {
+            vercelConfig = await getRes.json();
+            vercelVerified = vercelConfig.verified === true;
+            console.log(`[Vercel] GET /domains/${dominio.dominio} verified: ${vercelVerified}`);
+          }
+        } catch (err) {
+          console.error(`[Vercel API Error]:`, err);
+        }
+      }
+
+      // 2. Realizar verificações de DNS tradicionais (D-o-H)
+      let dnsAOk = false;
+      let dnsWWWOk = false;
+      let dnsCNAMEOk = false;
+
       let verificacaoA: VerificacaoResult;
       let verificacaoWWW: VerificacaoResult | null = null;
 
       if (tipoDominio.tipo === 'raiz') {
-        // Domínio raiz: verificar @ e www
-        verificacaoA = await verificarRegistroA(dominio.dominio, LOVABLE_IP);
+        // Domínio raiz: registro A para @ apontando para VERCEL_IP
+        verificacaoA = await verificarRegistroA(dominio.dominio, VERCEL_IP);
+        dnsAOk = verificacaoA.sucesso;
         await supabase.from('dominios_verificacoes').insert({
           dominio_id: dominio.id,
           tipo_verificacao: 'dns_a',
@@ -235,116 +270,133 @@ serve(async (req) => {
           detalhes: verificacaoA.detalhes,
         });
 
-        verificacaoWWW = await verificarRegistroA(`www.${dominio.dominio}`, LOVABLE_IP);
+        // E registro CNAME ou A para www apontando para Vercel
+        const verifyWWW_A = await verificarRegistroA(`www.${dominio.dominio}`, VERCEL_IP);
+        const verifyWWW_CNAME = await verificarRegistroCNAME(`www.${dominio.dominio}`, VERCEL_CNAME);
+        
+        dnsWWWOk = verifyWWW_A.sucesso || verifyWWW_CNAME.sucesso;
+        verificacaoWWW = {
+          tipo: 'dns_a_www',
+          sucesso: dnsWWWOk,
+          detalhes: { 
+            a_record: verifyWWW_A.detalhes, 
+            cname_record: verifyWWW_CNAME.detalhes 
+          }
+        };
+
         await supabase.from('dominios_verificacoes').insert({
           dominio_id: dominio.id,
           tipo_verificacao: 'dns_a_www',
-          sucesso: verificacaoWWW.sucesso,
+          sucesso: dnsWWWOk,
           detalhes: verificacaoWWW.detalhes,
         });
       } else {
-        // Subdomínio: verificar apenas o subdomínio específico
-        verificacaoA = await verificarRegistroA(dominio.dominio, LOVABLE_IP);
+        // Subdomínio: registro CNAME apontando para cname.vercel-dns.com
+        const verifyCNAME = await verificarRegistroCNAME(dominio.dominio, VERCEL_CNAME);
+        const verifyA = await verificarRegistroA(dominio.dominio, VERCEL_IP);
+
+        dnsCNAMEOk = verifyCNAME.sucesso || verifyA.sucesso;
+        verificacaoA = {
+          tipo: 'dns_cname_subdominio',
+          sucesso: dnsCNAMEOk,
+          detalhes: { 
+            cname_record: verifyCNAME.detalhes, 
+            a_record: verifyA.detalhes,
+            subdominio: tipoDominio.subdominio 
+          }
+        };
+
         await supabase.from('dominios_verificacoes').insert({
           dominio_id: dominio.id,
           tipo_verificacao: 'dns_a_subdominio',
-          sucesso: verificacaoA.sucesso,
-          detalhes: { ...verificacaoA.detalhes, subdominio: tipoDominio.subdominio },
+          sucesso: dnsCNAMEOk,
+          detalhes: verificacaoA.detalhes,
         });
       }
 
-      // Verificar registro TXT (AGORA OPCIONAL)
+      // Registro TXT (Opcional)
       const verificacaoTXT = await verificarRegistroTXT(dominio.dominio, dominio.token_verificacao);
       await supabase.from('dominios_verificacoes').insert({
         dominio_id: dominio.id,
         ...verificacaoTXT,
       });
 
-      // Determinar novo status baseado no tipo de domínio
-      // TXT AGORA É OPCIONAL - só A record é obrigatório
+      // 3. Determinar o status
       let novoStatus = dominio.status;
       let erroMensagem = null;
+      let sslStatus = 'pendente';
+      let sslErroMensagem = null;
 
-      const dnsConfigurado = tipoDominio.tipo === 'raiz'
-        ? verificacaoA.sucesso && verificacaoWWW?.sucesso
-        : verificacaoA.sucesso;
+      const dnsLocalmenteConfigurado = tipoDominio.tipo === 'raiz'
+        ? dnsAOk && dnsWWWOk
+        : dnsCNAMEOk;
 
-      // Verificar SSL se DNS estiver configurado
-      let sslResult: SSLVerificacaoResult | null = null;
-      if (dnsConfigurado) {
-        console.log(`Verificando SSL para ${dominio.dominio}...`);
-        sslResult = await verificarSSL(dominio.dominio);
-        console.log(`SSL status: ${sslResult.status}`);
-      }
+      // Determinar se ativamos diretamente (Direct-to-Active)
+      let deveAtivarDiretamente = false;
 
-      if (dnsConfigurado) {
-        novoStatus = 'aguardando_aprovacao';
-        
-        // Notificar admin
-        const { data: profile } = await supabase
-          .from('perfis_publicos')
-          .select('user_id')
-          .eq('id', dominio.perfil_publico_id)
-          .single();
-
-        if (profile) {
-          // Buscar admins
-          const { data: admins } = await supabase
-            .from('user_roles')
-            .select('user_id')
-            .eq('role', 'admin');
-
-          if (admins) {
-            for (const admin of admins) {
-              await supabase.from('alertas').insert({
-                consultora_id: admin.user_id,
-                tipo: 'dominio_aprovacao',
-                titulo: '🌐 Domínio Aguardando Aprovação',
-                descricao: `O domínio ${dominio.dominio} foi verificado e aguarda sua aprovação!${verificacaoTXT.sucesso ? ' (TXT verificado ✓)' : ''}`,
-              });
-            }
-          }
-        }
-      } else if (verificacaoA.sucesso || verificacaoWWW?.sucesso) {
-        novoStatus = 'dns_configurado';
-        const faltando = [];
-        
-        if (tipoDominio.tipo === 'raiz') {
-          if (!verificacaoA.sucesso) faltando.push('Registro A (@)');
-          if (!verificacaoWWW?.sucesso) faltando.push('Registro A (www)');
+      if (usouVercelApi) {
+        if (vercelVerified) {
+          deveAtivarDiretamente = true;
+          sslStatus = 'ativo';
+        } else if (dnsLocalmenteConfigurado) {
+          novoStatus = 'dns_configurado';
+          erroMensagem = 'DNS configurado corretamente! A Vercel está gerando o certificado SSL e ativando o domínio.';
+          sslStatus = 'provisionando';
+          sslErroMensagem = 'Aguardando provisionamento do SSL pela Vercel.';
         } else {
-          if (!verificacaoA.sucesso) faltando.push(`Registro A (${tipoDominio.subdominio})`);
+          novoStatus = 'pendente';
+          erroMensagem = 'Aguardando configuração de DNS. Certifique-se de configurar os registros apontados.';
         }
-        
-        erroMensagem = `DNS parcialmente configurado. Faltando: ${faltando.join(', ')}`;
       } else {
-        novoStatus = 'erro';
-        const tipoMsg = tipoDominio.tipo === 'raiz' 
-          ? 'para @ e www' 
-          : `para o subdomínio "${tipoDominio.subdominio}"`;
-        erroMensagem = `Nenhum registro DNS encontrado ${tipoMsg}. Verifique sua configuração no domínio raiz ${tipoDominio.dominioRaiz || dominio.dominio}.`;
+        // Fallback: Sem API do Vercel configurada, se o DNS bate, ativa automaticamente!
+        if (dnsLocalmenteConfigurado) {
+          deveAtivarDiretamente = true;
+          sslStatus = 'ativo';
+        } else {
+          novoStatus = 'pendente';
+          erroMensagem = 'Aguardando configuração de DNS.';
+        }
       }
 
-      // Atualizar status do domínio (incluindo SSL e flag TXT verificado)
+      if (deveAtivarDiretamente) {
+        novoStatus = 'ativo';
+        erroMensagem = null;
+        sslStatus = 'ativo';
+      }
+
+      // Preparar payload de atualização
       const updateData: any = {
         status: novoStatus,
         erro_mensagem: erroMensagem,
-        notas_admin: verificacaoTXT.sucesso 
-          ? `TXT verificado ✓ | ${new Date().toISOString()}`
-          : `TXT não verificado (opcional) | ${new Date().toISOString()}`
+        notas_admin: `Automatizado Vercel | TXT: ${verificacaoTXT.sucesso ? '✓' : '✗'} | Verificado em: ${new Date().toISOString()}`
       };
 
-      if (novoStatus === 'aguardando_aprovacao') {
+      if (novoStatus === 'ativo') {
         updateData.dns_verificado_em = new Date().toISOString();
+        if (!dominio.ativado_em) {
+          updateData.ativado_em = new Date().toISOString();
+          
+          // Criar alerta para o psicólogo informando que está ativo!
+          const { data: profile } = await supabase
+            .from('perfis_publicos')
+            .select('user_id')
+            .eq('id', dominio.perfil_publico_id)
+            .single();
+
+          if (profile) {
+            await supabase.from('alertas').insert({
+              consultora_id: profile.user_id,
+              tipo: 'dominio_ativo',
+              titulo: '🌐 Domínio Customizado Ativo!',
+              descricao: `O domínio ${dominio.dominio} foi configurado e ativado com sucesso!`,
+            });
+          }
+        }
       }
 
-      // Atualizar dados SSL se foi verificado
-      if (sslResult) {
-        updateData.ssl_status = sslResult.status;
-        updateData.ssl_verificado_em = new Date().toISOString();
-        updateData.ssl_valido_ate = sslResult.validoAte?.toISOString() || null;
-        updateData.ssl_erro_mensagem = sslResult.erroMensagem || null;
-      }
+      updateData.ssl_status = sslStatus;
+      updateData.ssl_verificado_em = new Date().toISOString();
+      updateData.ssl_erro_mensagem = sslErroMensagem;
 
       await supabase
         .from('dominios_customizados')
@@ -353,17 +405,14 @@ serve(async (req) => {
 
       resultados.push({
         dominio: dominio.dominio,
-        tipo: tipoDominio.tipo,
         status: novoStatus,
-        verificacoes: {
-          a: verificacaoA.sucesso,
-          www: verificacaoWWW?.sucesso,
-          txt: verificacaoTXT.sucesso,
-        },
-        ssl: sslResult ? {
-          status: sslResult.status,
-          erro: sslResult.erroMensagem,
-        } : null,
+        vercel: usouVercelApi ? { verified: vercelVerified } : 'fallback_dns_only',
+        dns: {
+          raiz_a: dnsAOk,
+          www_cname: dnsWWWOk,
+          subdominio_cname: dnsCNAMEOk,
+          txt: verificacaoTXT.sucesso
+        }
       });
     }
 

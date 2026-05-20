@@ -90,7 +90,13 @@ const Intervencoes = () => {
   });
 
   const { data: clientes } = useClientes();
-  const { data: categorias } = useCategoriasPersonalizadas({ tipo: 'intervencao' });
+  const { data: categoriasRaw = [] } = useCategoriasPersonalizadas({ tipo: 'intervencao' });
+  const categorias = categoriasRaw.reduce<any[]>((acc, current) => {
+    const isDuplicated = acc.some(
+      (item) => item.nome.toLowerCase() === current.nome.toLowerCase()
+    );
+    return isDuplicated ? acc : [...acc, current];
+  }, []);
 
   // Mutations
   const createMutation = useIntervencaoCreate();
