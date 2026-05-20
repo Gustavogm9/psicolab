@@ -77,17 +77,24 @@ export const useRelatorioDetalhes = (id: string | undefined, tipo: 'avaliacao' |
           const categoria = questao.categoria || 'Geral';
           
           const respostasQuestao = todasRespostas.map((r: any) => {
-            const respostas = r.respostas;
+            let respostasRaw = r.respostas;
+            if (typeof respostasRaw === 'string') {
+              try {
+                respostasRaw = JSON.parse(respostasRaw);
+              } catch (e) {
+                console.error("Erro ao fazer parse das respostas:", e);
+              }
+            }
             let foundVal: any = null;
             
-            if (Array.isArray(respostas)) {
-              let found = respostas.find((resp: any) => resp && (resp.questao_id === questao.id || resp.id === questao.id));
-              if (!found && qIdx < respostas.length) {
-                found = respostas[qIdx];
+            if (Array.isArray(respostasRaw)) {
+              let found = respostasRaw.find((resp: any) => resp && (resp.questao_id === questao.id || resp.id === questao.id));
+              if (!found && qIdx < respostasRaw.length) {
+                found = respostasRaw[qIdx];
               }
               foundVal = found ? (found.resposta ?? found.value) : null;
-            } else if (typeof respostas === 'object' && respostas !== null) {
-              foundVal = (respostas as Record<string, any>)[questao.id];
+            } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+              foundVal = (respostasRaw as Record<string, any>)[questao.id];
             }
             
             return foundVal;
@@ -125,11 +132,18 @@ export const useRelatorioDetalhes = (id: string | undefined, tipo: 'avaliacao' |
 
         // Distribuição de respostas por faixa
         const distribuicao = todasRespostas.reduce((acc: any, resposta: any) => {
-          const respostas = resposta.respostas;
+          let respostasRaw = resposta.respostas;
+          if (typeof respostasRaw === 'string') {
+            try {
+              respostasRaw = JSON.parse(respostasRaw);
+            } catch (e) {
+              console.error("Erro ao fazer parse das respostas:", e);
+            }
+          }
           const respostasNumericas: number[] = [];
 
-          if (Array.isArray(respostas)) {
-            respostas.forEach((r: any) => {
+          if (Array.isArray(respostasRaw)) {
+            respostasRaw.forEach((r: any) => {
               if (r) {
                 const val = r.resposta ?? r.value;
                 const num = Number(val);
@@ -138,8 +152,8 @@ export const useRelatorioDetalhes = (id: string | undefined, tipo: 'avaliacao' |
                 }
               }
             });
-          } else if (typeof respostas === 'object' && respostas !== null) {
-            Object.values(respostas).forEach((val: any) => {
+          } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+            Object.values(respostasRaw).forEach((val: any) => {
               const num = Number(val);
               if (!isNaN(num) && val !== null && val !== '') {
                 respostasNumericas.push(num);

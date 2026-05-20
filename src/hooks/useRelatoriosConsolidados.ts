@@ -98,9 +98,16 @@ export const useRelatoriosConsolidados = (clienteId?: string) => {
         let alertasCount = 0;
 
         todasRespostas.forEach((resposta: any) => {
-          const respostas = resposta.respostas;
-          if (Array.isArray(respostas)) {
-            respostas.forEach((r: any) => {
+          let respostasRaw = resposta.respostas;
+          if (typeof respostasRaw === 'string') {
+            try {
+              respostasRaw = JSON.parse(respostasRaw);
+            } catch (e) {
+              console.error("Erro ao fazer parse das respostas:", e);
+            }
+          }
+          if (Array.isArray(respostasRaw)) {
+            respostasRaw.forEach((r: any) => {
               if (r) {
                 const val = r.resposta ?? r.value;
                 const num = Number(val);
@@ -111,8 +118,8 @@ export const useRelatoriosConsolidados = (clienteId?: string) => {
                 }
               }
             });
-          } else if (typeof respostas === 'object' && respostas !== null) {
-            Object.values(respostas).forEach((val: any) => {
+          } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+            Object.values(respostasRaw).forEach((val: any) => {
               const num = Number(val);
               if (!isNaN(num) && val !== null && val !== '') {
                 scoreTotal += num;

@@ -74,19 +74,26 @@ export const useExportAvaliacao = () => {
           
           if (participante.respostas) {
             csvContent += "\nRespostas:\n";
-            const respostas = participante.respostas;
+            let respostasRaw = participante.respostas;
+            if (typeof respostasRaw === 'string') {
+              try {
+                respostasRaw = JSON.parse(respostasRaw);
+              } catch (e) {
+                console.error("Erro ao fazer parse das respostas:", e);
+              }
+            }
             
             questoes?.forEach((questao: Questao, qIdx: number) => {
               let respostaVal: any = null;
               
-              if (Array.isArray(respostas)) {
-                let found = respostas.find((r: any) => r && (r.questao_id === questao.id || r.id === questao.id));
-                if (!found && qIdx < respostas.length) {
-                  found = respostas[qIdx];
+              if (Array.isArray(respostasRaw)) {
+                let found = respostasRaw.find((r: any) => r && (r.questao_id === questao.id || r.id === questao.id));
+                if (!found && qIdx < respostasRaw.length) {
+                  found = respostasRaw[qIdx];
                 }
                 respostaVal = found ? (found.resposta ?? found.value) : null;
-              } else if (typeof respostas === 'object' && respostas !== null) {
-                respostaVal = (respostas as Record<string, any>)[questao.id];
+              } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+                respostaVal = (respostasRaw as Record<string, any>)[questao.id];
               }
               
               csvContent += `"Questão: ${questao.pergunta}","Resposta: ${respostaVal ?? 'Não respondida'}"\n`;
