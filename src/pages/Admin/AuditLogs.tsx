@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Download, Filter, Search, AlertCircle } from "lucide-react";
@@ -31,11 +31,6 @@ import {
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import { useImpersonationLogs, useAdminList, usePsychologistList } from "@/hooks/useImpersonationLogs";
 import { toast } from "sonner";
 
@@ -250,17 +245,14 @@ export default function AuditLogs() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(logsData?.logs || []).map((log) => (
-                <Collapsible
-                  key={log.id}
-                  open={expandedRow === log.id}
-                  onOpenChange={(open) =>
-                    setExpandedRow(open ? log.id : null)
-                  }
-                  asChild
-                >
-                  <>
-                    <TableRow className="cursor-pointer">
+              {(logsData?.logs || []).map((log) => {
+                const isExpanded = expandedRow === log.id;
+                return (
+                  <Fragment key={log.id}>
+                    <TableRow 
+                      className="cursor-pointer"
+                      onClick={() => setExpandedRow(isExpanded ? null : log.id)}
+                    >
                       <TableCell>
                         {format(
                           new Date(log.created_at),
@@ -282,15 +274,20 @@ export default function AuditLogs() {
                       <TableCell>
                         <code className="text-xs">{log.ip_address || "-"}</code>
                       </TableCell>
-                      <CollapsibleTrigger asChild>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">
-                            {expandedRow === log.id ? "Ocultar" : "Ver"}
-                          </Button>
-                        </TableCell>
-                      </CollapsibleTrigger>
+                      <TableCell>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedRow(isExpanded ? null : log.id);
+                          }}
+                        >
+                          {isExpanded ? "Ocultar" : "Ver"}
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                    <CollapsibleContent asChild>
+                    {isExpanded && (
                       <TableRow>
                         <TableCell colSpan={6} className="bg-muted/50">
                           <div className="space-y-2 p-4">
@@ -309,10 +306,10 @@ export default function AuditLogs() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    </CollapsibleContent>
-                  </>
-                </Collapsible>
-              ))}
+                    )}
+                  </Fragment>
+                );
+              })}
 
                {!isLoading && (!logsData?.logs || logsData.logs.length === 0) && (
                 <TableRow>

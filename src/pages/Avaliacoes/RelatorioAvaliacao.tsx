@@ -149,7 +149,14 @@ const RelatorioAvaliacao = () => {
   const processarDadosQuestao = (questao: any, index?: number) => {
     const respostas = todasRespostas
       .map(r => {
-        const respostasRaw = r.respostas;
+        let respostasRaw = r.respostas;
+        if (typeof respostasRaw === 'string') {
+          try {
+            respostasRaw = JSON.parse(respostasRaw);
+          } catch (e) {
+            console.error("Erro ao fazer parse das respostas:", e);
+          }
+        }
         let foundVal: any = null;
         if (Array.isArray(respostasRaw)) {
           let found = respostasRaw.find((resp: any) => resp && (resp.questao_id === questao.id || resp.id === questao.id));
@@ -436,8 +443,16 @@ const RelatorioAvaliacao = () => {
             <CardContent>
               <Accordion type="single" collapsible className="space-y-2">
                 {todasRespostas.map((resposta) => {
-                  const respostasArray = Array.isArray(resposta.respostas)
-                    ? resposta.respostas
+                  let respostasRaw = resposta.respostas;
+                  if (typeof respostasRaw === 'string') {
+                    try {
+                      respostasRaw = JSON.parse(respostasRaw);
+                    } catch (e) {
+                      console.error("Erro ao fazer parse das respostas:", e);
+                    }
+                  }
+                  const respostasArray = Array.isArray(respostasRaw)
+                    ? respostasRaw
                     : [];
 
                   return (
@@ -479,7 +494,14 @@ const RelatorioAvaliacao = () => {
                       <AccordionContent className="px-4 pb-4">
                         <div className="space-y-4 mt-2">
                           {avaliacaoData.questoes.map((questao: any, qIdx: number) => {
-                            const respostasRaw = resposta.respostas;
+                            let respostasRaw = resposta.respostas;
+                            if (typeof respostasRaw === 'string') {
+                              try {
+                                respostasRaw = JSON.parse(respostasRaw);
+                              } catch (e) {
+                                console.error("Erro ao fazer parse das respostas:", e);
+                              }
+                            }
                             let respostaQuestao: any = null;
 
                             if (Array.isArray(respostasRaw)) {

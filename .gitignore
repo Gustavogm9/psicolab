@@ -43,3 +43,4 @@ dist-ssr
 *.sw?
 .vercel
 .git_old/  
+scratch/

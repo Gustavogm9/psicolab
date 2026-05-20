@@ -149,17 +149,20 @@ const RespostasQuestionarios = () => {
   };
 
   const filteredRespostas = respostas.filter(resposta => {
-    const matchesSearch = resposta.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         resposta.email.toLowerCase().includes(searchTerm.toLowerCase());
+    if (!resposta) return false;
+    const nome = resposta.nome || "";
+    const email = resposta.email || "";
+    const matchesSearch = nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         email.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
 
   const stats = {
     totalRespostas: respostas.length,
-    respostasCompletas: respostas.filter(r => r.status === "concluida").length,
-    respostasIncompletas: respostas.filter(r => r.status === "incompleta").length,
+    respostasCompletas: respostas.filter(r => r && r.status === "concluida").length,
+    respostasIncompletas: respostas.filter(r => r && r.status === "incompleta").length,
     pontuacaoMedia: respostas.length > 0 
-      ? respostas.reduce((acc, r) => acc + (r.score_total || 0), 0) / respostas.length 
+      ? respostas.reduce((acc, r) => acc + (r?.score_total || 0), 0) / respostas.length 
       : 0
   };
 

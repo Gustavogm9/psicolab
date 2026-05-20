@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { CheckCircle, XCircle, Clock, ChevronDown, ChevronRight } from "lucide-r
 import { useAsaasSyncLogs } from "@/hooks/useAsaasSyncLogs";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
 
 interface SyncHistoryDialogProps {
   open: boolean;
@@ -88,14 +88,12 @@ export function SyncHistoryDialog({ open, onOpenChange }: SyncHistoryDialogProps
                   const temErros = log.erros > 0;
 
                   return (
-                    <Collapsible key={log.id} open={isExpanded} onOpenChange={() => toggleRow(log.id)}>
+                    <Fragment key={log.id}>
                       <TableRow>
                         <TableCell>
-                          <CollapsibleTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                            </Button>
-                          </CollapsibleTrigger>
+                          <Button variant="ghost" size="sm" onClick={() => toggleRow(log.id)}>
+                            {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                          </Button>
                         </TableCell>
                         <TableCell>
                           <div className="flex flex-col">
@@ -126,7 +124,7 @@ export function SyncHistoryDialog({ open, onOpenChange }: SyncHistoryDialogProps
                           )}
                         </TableCell>
                       </TableRow>
-                      <CollapsibleContent asChild>
+                      {isExpanded && (
                         <TableRow>
                           <TableCell colSpan={8} className="bg-muted/50">
                             <div className="p-4 space-y-2">
@@ -137,8 +135,8 @@ export function SyncHistoryDialog({ open, onOpenChange }: SyncHistoryDialogProps
                             </div>
                           </TableCell>
                         </TableRow>
-                      </CollapsibleContent>
-                    </Collapsible>
+                      )}
+                    </Fragment>
                   );
                 })}
               </TableBody>

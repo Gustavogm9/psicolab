@@ -183,20 +183,29 @@ export function calcularCopsoq(
         questoes.map((q) => [q.id, q.ordem])
     );
 
-    // Normalizar respostas de cada participante para Array<{ questao_id: string; resposta: number | string }>
+    // Normalizar respostas de cada participante para Array<{ questao_id: string; resposta: number | string; original_index?: number }>
     const respostasNormalizadas = todasRespostas.map(p => {
-        const raw = p.respostas;
-        let norm: Array<{ questao_id: string; resposta: number | string }> = [];
+        let raw = p.respostas;
+        if (typeof raw === 'string') {
+            try {
+                raw = JSON.parse(raw);
+            } catch (e) {
+                console.error("Erro ao fazer parse das respostas:", e);
+            }
+        }
+        let norm: Array<{ questao_id: string; resposta: number | string; original_index?: number }> = [];
 
         if (Array.isArray(raw)) {
-            norm = raw.map((r: any) => ({
+            norm = raw.map((r: any, idx: number) => ({
                 questao_id: r.questao_id || r.id,
                 resposta: r.resposta ?? r.value,
+                original_index: idx
             })).filter(r => r.questao_id !== undefined && r.resposta !== undefined && r.resposta !== null && r.resposta !== '');
         } else if (typeof raw === 'object' && raw !== null) {
-            norm = Object.entries(raw).map(([key, val]) => ({
+            norm = Object.entries(raw).map(([key, val], idx: number) => ({
                 questao_id: key,
                 resposta: val as string | number,
+                original_index: idx
             })).filter(r => r.resposta !== undefined && r.resposta !== null && r.resposta !== '');
         }
 
@@ -218,7 +227,6 @@ export function calcularCopsoq(
     for (const participante of respostasNormalizadas) {
         if (!participante.respostas || participante.respostas.length === 0) continue;
 
-        let index = 0;
         for (const r of participante.respostas) {
             let ordem = ordemPorId.get(r.questao_id);
             
@@ -226,10 +234,8 @@ export function calcularCopsoq(
             // os IDs antigos ficam órfãos. Como o COPSOQ exige resposta sequencial (obrigatória),
             // a ordem de inserção no JSON array preserva a ordem real da questão (1 a 76).
             if (ordem === undefined) {
-                ordem = index + 1;
+                ordem = (r.original_index !== undefined ? r.original_index : 0) + 1;
             }
-
-            index++;
 
             const valor = Number(r.resposta);
             if (isNaN(valor) || valor < 1 || valor > 5) continue; // resposta inválida
