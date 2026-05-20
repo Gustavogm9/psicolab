@@ -149,14 +149,20 @@ const RelatorioAvaliacao = () => {
   const processarDadosQuestao = (questao: any, index?: number) => {
     const respostas = todasRespostas
       .map(r => {
-        const respostasArray = Array.isArray(r.respostas) ? r.respostas : [];
-        let resp = respostasArray.find((res: any) => res.questao_id === questao.id);
-        if (!resp && index !== undefined && index < respostasArray.length) {
-          resp = respostasArray[index];
+        const respostasRaw = r.respostas;
+        let foundVal: any = null;
+        if (Array.isArray(respostasRaw)) {
+          let found = respostasRaw.find((resp: any) => resp && (resp.questao_id === questao.id || resp.id === questao.id));
+          if (!found && index !== undefined && index < respostasRaw.length) {
+            found = respostasRaw[index];
+          }
+          foundVal = found ? (found.resposta ?? found.value) : null;
+        } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+          foundVal = (respostasRaw as Record<string, any>)[questao.id];
         }
-        return resp ? (resp as any).resposta : null;
+        return foundVal;
       })
-      .filter(Boolean);
+      .filter((val: any) => val !== null && val !== undefined && val !== '');
 
     if (questao.tipo === 'multipla_escolha' || questao.tipo === 'escolha_unica') {
       const contagem: Record<string, number> = {};
@@ -473,12 +479,28 @@ const RelatorioAvaliacao = () => {
                       <AccordionContent className="px-4 pb-4">
                         <div className="space-y-4 mt-2">
                           {avaliacaoData.questoes.map((questao: any, qIdx: number) => {
-                            let respostaQuestao = respostasArray.find(
-                              (r: any) => r.questao_id === questao.id
-                            );
+                            const respostasRaw = resposta.respostas;
+                            let respostaQuestao: any = null;
 
-                            if (!respostaQuestao && qIdx < respostasArray.length) {
-                              respostaQuestao = respostasArray[qIdx];
+                            if (Array.isArray(respostasRaw)) {
+                              let found = respostasRaw.find(
+                                (r: any) => r && (r.questao_id === questao.id || r.id === questao.id)
+                              );
+                              if (!found && qIdx < respostasRaw.length) {
+                                found = respostasRaw[qIdx];
+                              }
+                              if (found) {
+                                respostaQuestao = {
+                                  resposta: found.resposta ?? found.value,
+                                };
+                              }
+                            } else if (typeof respostasRaw === 'object' && respostasRaw !== null) {
+                              const val = (respostasRaw as Record<string, any>)[questao.id];
+                              if (val !== undefined && val !== null) {
+                                respostaQuestao = {
+                                  resposta: val,
+                                };
+                              }
                             }
 
                             return (

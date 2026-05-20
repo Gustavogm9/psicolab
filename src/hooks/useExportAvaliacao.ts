@@ -74,11 +74,22 @@ export const useExportAvaliacao = () => {
           
           if (participante.respostas) {
             csvContent += "\nRespostas:\n";
-            const respostas = participante.respostas as Record<string, any>;
+            const respostas = participante.respostas;
             
-            questoes?.forEach((questao: Questao) => {
-              const resposta = respostas[questao.id];
-              csvContent += `"Questão: ${questao.pergunta}","Resposta: ${resposta || 'Não respondida'}"\n`;
+            questoes?.forEach((questao: Questao, qIdx: number) => {
+              let respostaVal: any = null;
+              
+              if (Array.isArray(respostas)) {
+                let found = respostas.find((r: any) => r && (r.questao_id === questao.id || r.id === questao.id));
+                if (!found && qIdx < respostas.length) {
+                  found = respostas[qIdx];
+                }
+                respostaVal = found ? (found.resposta ?? found.value) : null;
+              } else if (typeof respostas === 'object' && respostas !== null) {
+                respostaVal = (respostas as Record<string, any>)[questao.id];
+              }
+              
+              csvContent += `"Questão: ${questao.pergunta}","Resposta: ${respostaVal ?? 'Não respondida'}"\n`;
             });
           }
           

@@ -73,15 +73,29 @@ export const useRelatorioDetalhes = (id: string | undefined, tipo: 'avaliacao' |
         const questoes = avaliacao.questoes || [];
 
         // Calcular scores por categoria
-        const scoresPorCategoria = questoes.reduce((acc: any[], questao: any) => {
+        const scoresPorCategoria = questoes.reduce((acc: any[], questao: any, qIdx: number) => {
           const categoria = questao.categoria || 'Geral';
-          const respostasQuestao = todasRespostas.flatMap((r: any) => 
-            (r.respostas || []).filter((resp: any) => resp.questao_id === questao.id)
-          );
+          
+          const respostasQuestao = todasRespostas.map((r: any) => {
+            const respostas = r.respostas;
+            let foundVal: any = null;
+            
+            if (Array.isArray(respostas)) {
+              let found = respostas.find((resp: any) => resp && (resp.questao_id === questao.id || resp.id === questao.id));
+              if (!found && qIdx < respostas.length) {
+                found = respostas[qIdx];
+              }
+              foundVal = found ? (found.resposta ?? found.value) : null;
+            } else if (typeof respostas === 'object' && respostas !== null) {
+              foundVal = (respostas as Record<string, any>)[questao.id];
+            }
+            
+            return foundVal;
+          }).filter(val => val !== null && val !== undefined && val !== '');
 
-          const scoreTotal = respostasQuestao.reduce((sum: number, resp: any) => {
-            const valor = typeof resp.resposta === 'number' ? resp.resposta : 0;
-            return sum + valor;
+          const scoreTotal = respostasQuestao.reduce((sum: number, val: any) => {
+            const num = Number(val);
+            return sum + (isNaN(num) ? 0 : num);
           }, 0);
 
           const categoriaExistente = acc.find(c => c.categoria === categoria);
@@ -111,9 +125,27 @@ export const useRelatorioDetalhes = (id: string | undefined, tipo: 'avaliacao' |
 
         // Distribuição de respostas por faixa
         const distribuicao = todasRespostas.reduce((acc: any, resposta: any) => {
-          const respostasNumericas = (resposta.respostas || [])
-            .filter((r: any) => typeof r.resposta === 'number')
-            .map((r: any) => r.resposta);
+          const respostas = resposta.respostas;
+          const respostasNumericas: number[] = [];
+
+          if (Array.isArray(respostas)) {
+            respostas.forEach((r: any) => {
+              if (r) {
+                const val = r.resposta ?? r.value;
+                const num = Number(val);
+                if (!isNaN(num) && val !== null && val !== '') {
+                  respostasNumericas.push(num);
+                }
+              }
+            });
+          } else if (typeof respostas === 'object' && respostas !== null) {
+            Object.values(respostas).forEach((val: any) => {
+              const num = Number(val);
+              if (!isNaN(num) && val !== null && val !== '') {
+                respostasNumericas.push(num);
+              }
+            });
+          }
 
           respostasNumericas.forEach((valor: number) => {
             if (valor >= 9) acc.excelente++;

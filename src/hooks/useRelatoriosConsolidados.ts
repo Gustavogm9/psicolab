@@ -98,15 +98,29 @@ export const useRelatoriosConsolidados = (clienteId?: string) => {
         let alertasCount = 0;
 
         todasRespostas.forEach((resposta: any) => {
-          const respostas = resposta.respostas || [];
-          respostas.forEach((r: any) => {
-            if (typeof r.resposta === 'number') {
-              scoreTotal += r.resposta;
-              countRespostas++;
-              // Alerta se resposta < 6
-              if (r.resposta < 6) alertasCount++;
-            }
-          });
+          const respostas = resposta.respostas;
+          if (Array.isArray(respostas)) {
+            respostas.forEach((r: any) => {
+              if (r) {
+                const val = r.resposta ?? r.value;
+                const num = Number(val);
+                if (!isNaN(num) && val !== null && val !== '') {
+                  scoreTotal += num;
+                  countRespostas++;
+                  if (num < 6) alertasCount++;
+                }
+              }
+            });
+          } else if (typeof respostas === 'object' && respostas !== null) {
+            Object.values(respostas).forEach((val: any) => {
+              const num = Number(val);
+              if (!isNaN(num) && val !== null && val !== '') {
+                scoreTotal += num;
+                countRespostas++;
+                if (num < 6) alertasCount++;
+              }
+            });
+          }
         });
 
         const scoreMedia = countRespostas > 0 ? scoreTotal / countRespostas : 0;

@@ -175,7 +175,7 @@ function semaforoDominante(subescalas: SubescalaCopsoq[]): Semaforo {
  * @returns ResultadoCopsoq com médias, semáforos e alertas por subescala
  */
 export function calcularCopsoq(
-    todasRespostas: Array<{ respostas?: Array<{ questao_id: string; resposta: number | string }> | null }>,
+    todasRespostas: Array<{ respostas?: any | null }>,
     questoes: Array<{ id: string; ordem: number }>
 ): ResultadoCopsoq {
     // Mapa de questao_id → ordem (número do item 1-76)
@@ -183,8 +183,31 @@ export function calcularCopsoq(
         questoes.map((q) => [q.id, q.ordem])
     );
 
+    // Normalizar respostas de cada participante para Array<{ questao_id: string; resposta: number | string }>
+    const respostasNormalizadas = todasRespostas.map(p => {
+        const raw = p.respostas;
+        let norm: Array<{ questao_id: string; resposta: number | string }> = [];
+
+        if (Array.isArray(raw)) {
+            norm = raw.map((r: any) => ({
+                questao_id: r.questao_id || r.id,
+                resposta: r.resposta ?? r.value,
+            })).filter(r => r.questao_id !== undefined && r.resposta !== undefined && r.resposta !== null && r.resposta !== '');
+        } else if (typeof raw === 'object' && raw !== null) {
+            norm = Object.entries(raw).map(([key, val]) => ({
+                questao_id: key,
+                resposta: val as string | number,
+            })).filter(r => r.resposta !== undefined && r.resposta !== null && r.resposta !== '');
+        }
+
+        return {
+            ...p,
+            respostas: norm,
+        };
+    });
+
     // Total de respondentes com ao menos 1 resposta válida
-    const totalRespondentes = todasRespostas.filter(
+    const totalRespondentes = respostasNormalizadas.filter(
         (p) => p.respostas && p.respostas.length > 0
     ).length;
 
@@ -192,7 +215,7 @@ export function calcularCopsoq(
     // Estrutura: ordemItem → [pontuacoes dos respondentes]
     const pontuacoesPorItem = new Map<number, number[]>();
 
-    for (const participante of todasRespostas) {
+    for (const participante of respostasNormalizadas) {
         if (!participante.respostas || participante.respostas.length === 0) continue;
 
         let index = 0;
