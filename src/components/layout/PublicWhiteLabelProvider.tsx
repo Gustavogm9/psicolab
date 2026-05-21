@@ -7,6 +7,10 @@ interface WhiteLabelConfig {
   logo_url: string | null;
   cor_primaria: string;
   cor_secundaria: string;
+  pixel_facebook: string | null;
+  analytics_id: string | null;
+  favicon_url: string | null;
+  titulo_sistema: string | null;
 }
 
 interface PublicWhiteLabelContextType {
@@ -19,6 +23,10 @@ const defaultConfig: WhiteLabelConfig = {
   logo_url: null,
   cor_primaria: "#6366f1",
   cor_secundaria: "#8b5cf6",
+  pixel_facebook: null,
+  analytics_id: null,
+  favicon_url: null,
+  titulo_sistema: null,
 };
 
 const PublicWhiteLabelContext = createContext<PublicWhiteLabelContextType | undefined>(undefined);
@@ -45,7 +53,7 @@ export function PublicWhiteLabelProvider({ children, whiteLabelId, userId }: Pub
       try {
         let query = supabase
           .from("configuracoes_whitelabel")
-          .select("nome_empresa, logo_url, cor_primaria, cor_secundaria");
+          .select("nome_empresa, logo_url, cor_primaria, cor_secundaria, pixel_facebook, analytics_id, favicon_url, titulo_sistema");
 
         if (userId) {
           query = query.eq("user_id", userId);
@@ -156,6 +164,172 @@ export function PublicWhiteLabelProvider({ children, whiteLabelId, userId }: Pub
       );
     }
 
+    // Aplicar Título e Favicon
+    let originalTitle = document.title;
+    if (config.titulo_sistema) {
+      document.title = config.titulo_sistema;
+    } else if (config.nome_empresa) {
+      document.title = `${config.nome_empresa} | Psicolab`;
+    }
+
+    let originalFaviconHref = "";
+    let favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement;
+    if (config.favicon_url) {
+      if (favicon) {
+        originalFaviconHref = favicon.href;
+        favicon.href = config.favicon_url;
+      } else {
+        favicon = document.createElement('link');
+        favicon.rel = 'icon';
+        favicon.href = config.favicon_url;
+        document.head.appendChild(favicon);
+      }
+    }
+
+    // CRÍTICO PARA IOS (IPHONE): Injetar apple-touch-icon dinâmico do Whitelabel
+    // Sem isso, o Safari no iOS ignora o manifesto PWA para o ícone e mostra o padrão
+    let appleTouchIcon = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement;
+    let originalAppleTouchIconHref = "";
+    const targetIcon = config.logo_url || config.favicon_url || "/favicon.png";
+    if (appleTouchIcon) {
+      originalAppleTouchIconHref = appleTouchIcon.href;
+      appleTouchIcon.href = targetIcon;
+    } else {
+      appleTouchIcon = document.createElement('link');
+      appleTouchIcon.rel = 'apple-touch-icon';
+      appleTouchIcon.href = targetIcon;
+      document.head.appendChild(appleTouchIcon);
+    }
+
+    // CRÍTICO PARA IOS (IPHONE): Injetar título do PWA na tela inicial
+    let appleAppTitle = document.querySelector("meta[name='apple-mobile-web-app-title']") as HTMLMetaElement;
+    let originalAppleAppTitle = "";
+    const targetTitle = config.titulo_sistema || config.nome_empresa || "MenteMetrics";
+    if (appleAppTitle) {
+      originalAppleAppTitle = appleAppTitle.content;
+      appleAppTitle.content = targetTitle;
+    } else {
+      appleAppTitle = document.createElement('meta');
+      appleAppTitle.name = 'apple-mobile-web-app-title';
+      appleAppTitle.content = targetTitle;
+      document.head.appendChild(appleAppTitle);
+    }
+
+    // CRÍTICO PARA IOS (IPHONE): Garantir modo standalone no Safari
+    let appleCapable = document.querySelector("meta[name='apple-mobile-web-app-capable']") as HTMLMetaElement;
+    let originalAppleCapable = "";
+    if (appleCapable) {
+      originalAppleCapable = appleCapable.content;
+      appleCapable.content = "yes";
+    } else {
+      appleCapable = document.createElement('meta');
+      appleCapable.name = 'apple-mobile-web-app-capable';
+      appleCapable.content = "yes";
+      document.head.appendChild(appleCapable);
+    }
+
+    // CRÍTICO PARA ANDROID E IOS: Injetar cor de status bar do Whitelabel
+    let themeColorMeta = document.querySelector("meta[name='theme-color']") as HTMLMetaElement;
+    let originalThemeColor = "";
+    if (config.cor_primaria) {
+      if (themeColorMeta) {
+        originalThemeColor = themeColorMeta.content;
+        themeColorMeta.content = config.cor_primaria;
+      } else {
+        themeColorMeta = document.createElement('meta');
+        themeColorMeta.name = 'theme-color';
+        themeColorMeta.content = config.cor_primaria;
+        document.head.appendChild(themeColorMeta);
+      }
+    }
+
+    // Aplicar Manifesto PWA Dinâmico Whitelabel
+    let manifestLink = document.querySelector("link[rel='manifest']") as HTMLLinkElement;
+    let originalManifestHref = "";
+    try {
+      const manifestObj = {
+        name: config.titulo_sistema || config.nome_empresa || "MenteMetrics",
+        short_name: config.nome_empresa || "MenteMetrics",
+        description: "Plataforma integrada de avaliação de riscos e bem-estar organizacional.",
+        theme_color: config.cor_primaria || "#6366f1",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait",
+        start_url: window.location.origin + window.location.pathname,
+        scope: "/",
+        icons: [
+          {
+            src: config.favicon_url || config.logo_url || "/favicon.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: config.favicon_url || config.logo_url || "/favicon.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      };
+      
+      const manifestString = JSON.stringify(manifestObj);
+      const manifestBase64 = btoa(unescape(encodeURIComponent(manifestString)));
+      const manifestDataUri = `data:application/manifest+json;base64,${manifestBase64}`;
+      
+      if (manifestLink) {
+        originalManifestHref = manifestLink.href;
+        manifestLink.href = manifestDataUri;
+      } else {
+        manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestDataUri;
+        document.head.appendChild(manifestLink);
+      }
+    } catch (e) {
+      console.error("[PWA Manifest] Erro ao criar manifesto dinâmico:", e);
+    }
+
+    // Aplicar Scripts de Rastreamento (Facebook Pixel & Google Analytics)
+    const trackedScripts: HTMLScriptElement[] = [];
+
+    if (config.pixel_facebook) {
+      const pixelScript = document.createElement('script');
+      pixelScript.id = 'whitelabel-fb-pixel';
+      pixelScript.innerHTML = `
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '${config.pixel_facebook}');
+        fbq('track', 'PageView');
+      `;
+      document.head.appendChild(pixelScript);
+      trackedScripts.push(pixelScript);
+    }
+
+    if (config.analytics_id) {
+      const gtmScript = document.createElement('script');
+      gtmScript.id = 'whitelabel-gtm-base';
+      gtmScript.src = `https://www.googletagmanager.com/gtag/js?id=${config.analytics_id}`;
+      gtmScript.async = true;
+      document.head.appendChild(gtmScript);
+      trackedScripts.push(gtmScript);
+
+      const gtmInlineScript = document.createElement('script');
+      gtmInlineScript.id = 'whitelabel-gtm-inline';
+      gtmInlineScript.innerHTML = `
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '${config.analytics_id}');
+      `;
+      document.head.appendChild(gtmInlineScript);
+      trackedScripts.push(gtmInlineScript);
+    }
+
     // Marcar cores como aplicadas APÓS aplicar no DOM
     setColorsApplied(true);
 
@@ -168,6 +342,65 @@ export function PublicWhiteLabelProvider({ children, whiteLabelId, userId }: Pub
       root.style.removeProperty("--accent-foreground");
       root.style.removeProperty("--gradient-primary");
       root.style.removeProperty("--gradient-hero");
+      
+      // Restaurar Título e Favicon originais
+      document.title = originalTitle;
+      if (favicon && originalFaviconHref) {
+        favicon.href = originalFaviconHref;
+      }
+
+      // Restaurar apple-touch-icon original do iOS
+      if (appleTouchIcon) {
+        if (originalAppleTouchIconHref) {
+          appleTouchIcon.href = originalAppleTouchIconHref;
+        } else {
+          appleTouchIcon.parentNode?.removeChild(appleTouchIcon);
+        }
+      }
+
+      // Restaurar appleAppTitle original do iOS
+      if (appleAppTitle) {
+        if (originalAppleAppTitle) {
+          appleAppTitle.content = originalAppleAppTitle;
+        } else {
+          appleAppTitle.parentNode?.removeChild(appleAppTitle);
+        }
+      }
+
+      // Restaurar appleCapable original do iOS
+      if (appleCapable) {
+        if (originalAppleCapable) {
+          appleCapable.content = originalAppleCapable;
+        } else {
+          appleCapable.parentNode?.removeChild(appleCapable);
+        }
+      }
+
+      // Restaurar theme-color original
+      if (themeColorMeta) {
+        if (originalThemeColor) {
+          themeColorMeta.content = originalThemeColor;
+        } else {
+          themeColorMeta.parentNode?.removeChild(themeColorMeta);
+        }
+      }
+
+      // Restaurar Manifesto PWA original
+      if (manifestLink) {
+        if (originalManifestHref) {
+          manifestLink.href = originalManifestHref;
+        } else {
+          manifestLink.parentNode?.removeChild(manifestLink);
+        }
+      }
+
+      // Remover scripts de rastreamento adicionados dinamicamente
+      trackedScripts.forEach(script => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      });
+
       setColorsApplied(false);
     };
   }, [config, isLoading]);
@@ -175,10 +408,16 @@ export function PublicWhiteLabelProvider({ children, whiteLabelId, userId }: Pub
   // Bloquear renderização até cores estarem aplicadas
   if (isLoading || !colorsApplied) {
     return (
-      <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-10 w-10 animate-spin text-slate-300" />
-          <p className="text-sm text-slate-400">Carregando...</p>
+      <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center transition-all duration-300">
+        <div className="bg-slate-900/60 border border-slate-800/80 backdrop-blur-xl p-8 rounded-2xl flex flex-col items-center gap-4 max-w-sm w-full mx-4 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+          <div className="relative flex items-center justify-center w-16 h-16">
+            <div className="absolute inset-0 rounded-full border-2 border-indigo-500/20 animate-ping duration-1000" />
+            <Loader2 className="h-8 w-8 animate-spin text-indigo-500 relative z-10" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-sm font-medium text-slate-200">Carregando ambiente personalizado</p>
+            <p className="text-xs text-slate-400">Preparando sua experiência segura</p>
+          </div>
         </div>
       </div>
     );

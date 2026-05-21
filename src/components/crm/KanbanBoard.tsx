@@ -254,7 +254,16 @@ export function KanbanBoard({ oportunidades, onEstagioChange, onOportunidadeClic
     
     if (over) {
       const oportunidadeId = active.id as string;
-      const newEstagio = over.id as string;
+      let newEstagio = over.id as string;
+      
+      // Se não for uma coluna direta, mas for o ID de outra oportunidade,
+      // pegamos o estágio da oportunidade sobre a qual dropamos
+      if (!columns.some(col => col.id === newEstagio)) {
+        const targetOportunidade = oportunidades.find(o => o.id === newEstagio);
+        if (targetOportunidade) {
+          newEstagio = targetOportunidade.estagio;
+        }
+      }
       
       // Verificar se é uma coluna válida
       if (columns.some(col => col.id === newEstagio)) {

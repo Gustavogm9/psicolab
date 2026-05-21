@@ -147,7 +147,7 @@ const RelatorioAvaliacao = () => {
 
   // Processar dados por questão
   const processarDadosQuestao = (questao: any, index?: number) => {
-    const respostas = todasRespostas
+    const respostas = respostasFiltradas
       .map(r => {
         let respostasRaw = r.respostas;
         if (typeof respostasRaw === 'string') {

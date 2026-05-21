@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,6 +38,39 @@ const AvaliacaoPublicaContent = () => {
   const { mutate: criarRespostaPublica } = useRespostaPublicaCreate();
   const { mutate: atualizarRespostaToken } = useRespostaTokenUpdate();
   const { mutate: autoCreateParticipante, isPending: criandoParticipante } = useParticipanteAutoCreate();
+
+  // Efeito para carregar o rascunho do localStorage
+  useEffect(() => {
+    if (!avaliacao?.id) return;
+    try {
+      const savedDraft = localStorage.getItem(`draft_a_${avaliacao.id}`);
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        if (draft.respostas) setRespostas(draft.respostas);
+        if (typeof draft.currentQuestion === 'number') setCurrentQuestion(draft.currentQuestion);
+        if (draft.dadosContato) setDadosContato(draft.dadosContato);
+        if (draft.participanteAutoId) setParticipanteAutoId(draft.participanteAutoId);
+      }
+    } catch (e) {
+      console.error("Erro ao carregar rascunho:", e);
+    }
+  }, [avaliacao?.id]);
+
+  // Efeito para salvar o rascunho no localStorage
+  useEffect(() => {
+    if (!avaliacao?.id) return;
+    try {
+      const draft = {
+        respostas,
+        currentQuestion,
+        dadosContato,
+        participanteAutoId
+      };
+      localStorage.setItem(`draft_a_${avaliacao.id}`, JSON.stringify(draft));
+    } catch (e) {
+      console.error("Erro ao salvar rascunho:", e);
+    }
+  }, [avaliacao?.id, respostas, currentQuestion, dadosContato, participanteAutoId]);
 
   const questoes = avaliacao?.questoes || [];
   const configuracoes = (avaliacao?.configuracoes as any) || {
@@ -128,6 +161,9 @@ const AvaliacaoPublicaContent = () => {
       }, {
         onSuccess: () => {
           setConcluido(true);
+          if (avaliacao?.id) {
+            localStorage.removeItem(`draft_a_${avaliacao.id}`);
+          }
         }
       });
       return;
@@ -141,6 +177,9 @@ const AvaliacaoPublicaContent = () => {
       }, {
         onSuccess: () => {
           setConcluido(true);
+          if (avaliacao?.id) {
+            localStorage.removeItem(`draft_a_${avaliacao.id}`);
+          }
         }
       });
       return;
@@ -157,6 +196,9 @@ const AvaliacaoPublicaContent = () => {
     }, {
       onSuccess: () => {
         setConcluido(true);
+        if (avaliacao?.id) {
+          localStorage.removeItem(`draft_a_${avaliacao.id}`);
+        }
       }
     });
   };

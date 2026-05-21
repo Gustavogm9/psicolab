@@ -32,6 +32,108 @@ export function ThemeInjector() {
         faviconLink.type = 'image/x-icon';
       }
     }
+
+    // CRÍTICO PARA IOS (IPHONE): Injetar apple-touch-icon dinâmico do Whitelabel
+    // Sem isso, o Safari no iOS ignora o manifesto PWA para o ícone e mostra o padrão
+    let appleTouchIcon = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement;
+    let originalAppleTouchIconHref = "";
+    const targetIcon = config.logo_url || config.favicon_url || "/favicon.png";
+    if (appleTouchIcon) {
+      originalAppleTouchIconHref = appleTouchIcon.href;
+      appleTouchIcon.href = targetIcon;
+    } else {
+      appleTouchIcon = document.createElement('link');
+      appleTouchIcon.rel = 'apple-touch-icon';
+      appleTouchIcon.href = targetIcon;
+      document.head.appendChild(appleTouchIcon);
+    }
+
+    // CRÍTICO PARA IOS (IPHONE): Injetar título do PWA na tela inicial
+    let appleAppTitle = document.querySelector("meta[name='apple-mobile-web-app-title']") as HTMLMetaElement;
+    let originalAppleAppTitle = "";
+    const targetTitle = config.titulo_sistema || config.nome_empresa || "MenteMetrics";
+    if (appleAppTitle) {
+      originalAppleAppTitle = appleAppTitle.content;
+      appleAppTitle.content = targetTitle;
+    } else {
+      appleAppTitle = document.createElement('meta');
+      appleAppTitle.name = 'apple-mobile-web-app-title';
+      appleAppTitle.content = targetTitle;
+      document.head.appendChild(appleAppTitle);
+    }
+
+    // CRÍTICO PARA IOS (IPHONE): Garantir modo standalone no Safari
+    let appleCapable = document.querySelector("meta[name='apple-mobile-web-app-capable']") as HTMLMetaElement;
+    let originalAppleCapable = "";
+    if (appleCapable) {
+      originalAppleCapable = appleCapable.content;
+      appleCapable.content = "yes";
+    } else {
+      appleCapable = document.createElement('meta');
+      appleCapable.name = 'apple-mobile-web-app-capable';
+      appleCapable.content = "yes";
+      document.head.appendChild(appleCapable);
+    }
+
+    // CRÍTICO PARA ANDROID E IOS: Injetar cor de status bar do Whitelabel
+    let themeColorMeta = document.querySelector("meta[name='theme-color']") as HTMLMetaElement;
+    let originalThemeColor = "";
+    if (config.cor_primaria) {
+      if (themeColorMeta) {
+        originalThemeColor = themeColorMeta.content;
+        themeColorMeta.content = config.cor_primaria;
+      } else {
+        themeColorMeta = document.createElement('meta');
+        themeColorMeta.name = 'theme-color';
+        themeColorMeta.content = config.cor_primaria;
+        document.head.appendChild(themeColorMeta);
+      }
+    }
+    
+    // Aplicar Manifesto PWA Dinâmico Whitelabel
+    let manifestLink = document.querySelector("link[rel='manifest']") as HTMLLinkElement;
+    let originalManifestHref = "";
+    try {
+      const manifestObj = {
+        name: config.titulo_sistema || config.nome_empresa || "MenteMetrics",
+        short_name: config.nome_empresa || "MenteMetrics",
+        description: "Plataforma integrada de avaliação de riscos e bem-estar organizacional.",
+        theme_color: config.cor_primaria || "#6366f1",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait",
+        start_url: window.location.origin + window.location.pathname,
+        scope: "/",
+        icons: [
+          {
+            src: config.favicon_url || config.logo_url || "/favicon.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: config.favicon_url || config.logo_url || "/favicon.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      };
+      
+      const manifestString = JSON.stringify(manifestObj);
+      const manifestBase64 = btoa(unescape(encodeURIComponent(manifestString)));
+      const manifestDataUri = `data:application/manifest+json;base64,${manifestBase64}`;
+      
+      if (manifestLink) {
+        originalManifestHref = manifestLink.href;
+        manifestLink.href = manifestDataUri;
+      } else {
+        manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestDataUri;
+        document.head.appendChild(manifestLink);
+      }
+    } catch (e) {
+      console.error("[PWA Manifest] Erro ao criar manifesto dinâmico:", e);
+    }
     
     // Debug: verificar se as cores estão chegando corretamente
     console.log('[ThemeInjector] Aplicando configurações:', {
@@ -139,6 +241,51 @@ export function ThemeInjector() {
       if (faviconLink) {
         faviconLink.href = '/favicon.svg';
         faviconLink.type = 'image/svg+xml';
+      }
+
+      // Restaurar apple-touch-icon original do iOS
+      if (appleTouchIcon) {
+        if (originalAppleTouchIconHref) {
+          appleTouchIcon.href = originalAppleTouchIconHref;
+        } else {
+          appleTouchIcon.parentNode?.removeChild(appleTouchIcon);
+        }
+      }
+
+      // Restaurar appleAppTitle original do iOS
+      if (appleAppTitle) {
+        if (originalAppleAppTitle) {
+          appleAppTitle.content = originalAppleAppTitle;
+        } else {
+          appleAppTitle.parentNode?.removeChild(appleAppTitle);
+        }
+      }
+
+      // Restaurar appleCapable original do iOS
+      if (appleCapable) {
+        if (originalAppleCapable) {
+          appleCapable.content = originalAppleCapable;
+        } else {
+          appleCapable.parentNode?.removeChild(appleCapable);
+        }
+      }
+
+      // Restaurar theme-color original
+      if (themeColorMeta) {
+        if (originalThemeColor) {
+          themeColorMeta.content = originalThemeColor;
+        } else {
+          themeColorMeta.parentNode?.removeChild(themeColorMeta);
+        }
+      }
+
+      // Restaurar Manifesto PWA original
+      if (manifestLink) {
+        if (originalManifestHref) {
+          manifestLink.href = originalManifestHref;
+        } else {
+          manifestLink.parentNode?.removeChild(manifestLink);
+        }
       }
       
       root.style.removeProperty("--primary");

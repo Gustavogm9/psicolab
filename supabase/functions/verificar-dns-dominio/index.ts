@@ -348,14 +348,13 @@ serve(async (req) => {
           erroMensagem = 'Aguardando configuração de DNS. Certifique-se de configurar os registros apontados.';
         }
       } else {
-        // Fallback: Sem API do Vercel configurada, se o DNS bate, ativa automaticamente!
-        if (dnsLocalmenteConfigurado) {
-          deveAtivarDiretamente = true;
-          sslStatus = 'ativo';
-        } else {
-          novoStatus = 'pendente';
-          erroMensagem = 'Aguardando configuração de DNS.';
-        }
+        // Fallback: Sem API do Vercel configurada
+        // Não podemos ativar diretamente para evitar páginas de erro 404 na Vercel!
+        deveAtivarDiretamente = false;
+        novoStatus = 'pendente';
+        erroMensagem = 'Configuração DNS detectada, mas a integração com a API da Vercel está indisponível ou ausente. O domínio deve ser vinculado manualmente no painel da hospedagem.';
+        sslStatus = 'erro';
+        sslErroMensagem = 'Integração Vercel ausente.';
       }
 
       if (deveAtivarDiretamente) {

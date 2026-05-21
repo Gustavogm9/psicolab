@@ -39,6 +39,17 @@ import { useQuestionarioDetalhes } from '@/hooks/useQuestionarioDetalhes';
 import { useLeadsRespostas } from '@/hooks/useLeadsRespostas';
 import { Skeleton } from '@/components/ui/skeleton';
 
+const formatarDataSafe = (dateString?: string | null, fallback = 'Em andamento') => {
+  if (!dateString) return fallback;
+  try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Data inválida';
+    return date.toLocaleDateString('pt-BR');
+  } catch (e) {
+    return 'Data inválida';
+  }
+};
+
 const RespostasQuestionarios = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
@@ -78,35 +89,39 @@ const RespostasQuestionarios = () => {
 
   const handleAdicionarCRM = (resposta: any) => {
     setLoading(resposta.id);
-    
-    criarLead({
-      respostaId: resposta.id,
-      nome: resposta.nome,
-      email: resposta.email,
-      telefone: resposta.telefone,
-      score: resposta.score_total,
-      categoria: resposta.categoria || 'não_classificado',
-      origem: questionario?.slug || 'desconhecido',
-    }, {
-      onSuccess: () => {
-        setLoading(null);
-        toast.success('Lead adicionado ao CRM com sucesso');
-      },
-      onError: (error: any) => {
-        setLoading(null);
-        // FASE 3.2: Melhorar tratamento de duplicata na UI
-        if (error.message.includes('já está no CRM')) {
-          toast.error('Este respondente já está no CRM', {
-            action: {
-              label: 'Ver no CRM',
-              onClick: () => navigate('/crm'),
-            },
-          });
-        } else {
-          toast.error('Erro ao adicionar lead');
-        }
-      },
-    });
+    try {
+      criarLead({
+        respostaId: resposta.id,
+        nome: resposta.nome,
+        email: resposta.email,
+        telefone: resposta.telefone,
+        score: resposta.score_total,
+        categoria: resposta.categoria || 'não_classificado',
+        origem: questionario?.slug || 'desconhecido',
+      }, {
+        onSuccess: () => {
+          setLoading(null);
+          toast.success('Lead adicionado ao CRM com sucesso');
+        },
+        onError: (error: any) => {
+          setLoading(null);
+          // FASE 3.2: Melhorar tratamento de duplicata na UI
+          if (error.message?.includes('já está no CRM')) {
+            toast.error('Este respondente já está no CRM', {
+              action: {
+                label: 'Ver no CRM',
+                onClick: () => navigate('/crm'),
+              },
+            });
+          } else {
+            toast.error('Erro ao adicionar lead');
+          }
+        },
+      });
+    } catch (error) {
+      setLoading(null);
+      toast.error('Erro ao adicionar lead');
+    }
   };
 
   const handleFiltrosAvancados = () => {
@@ -124,7 +139,7 @@ const RespostasQuestionarios = () => {
         Status: resposta.status,
         Score: resposta.score_total,
         Categoria: resposta.categoria || '',
-        DataResposta: resposta.data_fim ? new Date(resposta.data_fim).toLocaleDateString('pt-BR') : ''
+        DataResposta: formatarDataSafe(resposta.data_fim, '')
       }));
       
       const csvContent = Object.keys(csvData[0] || {}).join(',') + '\n' +
@@ -186,7 +201,8 @@ const RespostasQuestionarios = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completa": return "bg-green-100 text-green-800";
+      case "completa":
+      case "concluida": return "bg-green-100 text-green-800";
       case "incompleta": return "bg-yellow-100 text-yellow-800";
       case "abandonada": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
@@ -211,7 +227,7 @@ const RespostasQuestionarios = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-2 break-all">
             <BarChart3 className="h-8 w-8 text-primary" />
             Respostas: {questionario?.titulo}
           </h1>
@@ -371,7 +387,7 @@ const RespostasQuestionarios = () => {
                         )}
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
-                          {resposta.data_fim ? new Date(resposta.data_fim).toLocaleDateString('pt-BR') : 'Em andamento'}
+                          {formatarDataSafe(resposta.data_fim)}
                         </div>
                       </div>
                       
@@ -481,7 +497,7 @@ const RespostasQuestionarios = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">Data da Resposta</p>
-                    <p className="font-medium">{respostaSelecionada.data_fim ? new Date(respostaSelecionada.data_fim).toLocaleDateString('pt-BR') : 'Em andamento'}</p>
+                    <p className="font-medium">{formatarDataSafe(respostaSelecionada.data_fim)}</p>
                   </div>
                 </div>
               </div>
@@ -500,11 +516,11 @@ const RespostasQuestionarios = () => {
                   </div>
                   <div className="text-center">
                     <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      respostaSelecionada.status === 'completa' 
+                      respostaSelecionada.status === 'completa' || respostaSelecionada.status === 'concluida'
                         ? 'bg-green-100 text-green-800' 
                         : 'bg-yellow-100 text-yellow-800'
                     }`}>
-                      {respostaSelecionada.status === 'completa' ? 'Completa' : 'Incompleta'}
+                      {respostaSelecionada.status === 'completa' || respostaSelecionada.status === 'concluida' ? 'Completa' : 'Incompleta'}
                     </span>
                   </div>
                 </div>
@@ -524,6 +540,39 @@ const RespostasQuestionarios = () => {
                   </ul>
                 </div>
               </div>
+
+              {/* Respostas Individuais */}
+              {questionario?.questoes && questionario.questoes.length > 0 && (
+                <div className="space-y-4 border-t pt-4">
+                  <h3 className="font-semibold text-lg">Respostas por Questão</h3>
+                  <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                    {questionario.questoes.map((questao: any, idx: number) => {
+                      let respostasRaw = respostaSelecionada.respostas;
+                      if (typeof respostasRaw === 'string') {
+                        try { respostasRaw = JSON.parse(respostasRaw); } catch(e) {}
+                      }
+                      let foundVal = 'Não respondido';
+                      if (Array.isArray(respostasRaw)) {
+                        const found = respostasRaw.find((r: any) => r && (r.questao_id === questao.id || r.id === questao.id));
+                        if (found) {
+                          foundVal = found.resposta ?? found.value ?? 'Não respondido';
+                        }
+                      }
+                      return (
+                        <div key={questao.id} className="border-b pb-3 last:border-0">
+                          <p className="text-sm font-medium text-gray-700">
+                            <span className="text-primary font-bold mr-1">Q{idx + 1}.</span>
+                            {questao.texto || questao.pergunta}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1 bg-muted/30 p-2 rounded">
+                            Resposta: <strong className="text-foreground">{foundVal}</strong>
+                          </p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

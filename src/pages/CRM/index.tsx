@@ -1165,10 +1165,7 @@ export default function CRM() {
 
         {/* Content by View Mode */}
         {viewMode === 'charts' && (
-          <div className="text-center py-12 text-muted-foreground">
-            <BarChart3 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Gráficos de conversão em desenvolvimento</p>
-          </div>
+          <ConversionCharts leads={leadsFiltrados} />
         )}
 
         {viewMode === 'kanban' && (

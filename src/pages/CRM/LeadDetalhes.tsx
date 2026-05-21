@@ -24,13 +24,24 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 export default function LeadDetalhes() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { data: leads } = useLeadsCRM();
+  const { data: leads, isLoading } = useLeadsCRM();
   const deleteLead = useLeadDelete();
   
   const [dialogEdit, setDialogEdit] = useState(false);
   const [dialogAgendar, setDialogAgendar] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   
+  if (isLoading) {
+    return (
+      <MainLayout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          <p className="text-muted-foreground">Carregando detalhes do lead...</p>
+        </div>
+      </MainLayout>
+    );
+  }
+
   const lead = leads?.find(l => l.id === id);
 
   if (!lead) {

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,6 +29,39 @@ const QuestionarioPublicoContent = () => {
   const { data: questionario, isLoading } = useQuestionarioDetalhes(slug || '');
   const { mutate: criarResposta } = useRespostaCreate();
   const { mutate: atualizarResposta } = useRespostaUpdate();
+
+  // Efeito para carregar o rascunho do localStorage
+  useEffect(() => {
+    if (!questionario?.id) return;
+    try {
+      const savedDraft = localStorage.getItem(`draft_q_${questionario.id}`);
+      if (savedDraft) {
+        const draft = JSON.parse(savedDraft);
+        if (draft.respostas) setRespostas(draft.respostas);
+        if (typeof draft.currentQuestion === 'number') setCurrentQuestion(draft.currentQuestion);
+        if (draft.dadosContato) setDadosContato(draft.dadosContato);
+        if (draft.respostaId) setRespostaId(draft.respostaId);
+      }
+    } catch (e) {
+      console.error("Erro ao carregar rascunho:", e);
+    }
+  }, [questionario?.id]);
+
+  // Efeito para salvar o rascunho no localStorage
+  useEffect(() => {
+    if (!questionario?.id) return;
+    try {
+      const draft = {
+        respostas,
+        currentQuestion,
+        dadosContato,
+        respostaId
+      };
+      localStorage.setItem(`draft_q_${questionario.id}`, JSON.stringify(draft));
+    } catch (e) {
+      console.error("Erro ao salvar rascunho:", e);
+    }
+  }, [questionario?.id, respostas, currentQuestion, dadosContato, respostaId]);
 
   const questoes = questionario?.questoes || [];
   const configuracoes = (questionario?.configuracoes as any) || {
@@ -160,6 +193,9 @@ const QuestionarioPublicoContent = () => {
     }, {
       onSuccess: () => {
         setConcluido(true);
+        if (questionario?.id) {
+          localStorage.removeItem(`draft_q_${questionario.id}`);
+        }
       }
     });
   };

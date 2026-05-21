@@ -93,7 +93,7 @@ export default function ClienteDetalhes() {
               <Button 
                 variant="link" 
                 className="p-0 h-auto text-green-600 hover:text-green-700"
-                onClick={() => navigate(`/crm/leads/${leadOrigem.id}`)}
+                onClick={() => navigate(`/crm/${leadOrigem.id}`)}
               >
                 Ver Histórico do Lead →
               </Button>
@@ -126,7 +126,7 @@ export default function ClienteDetalhes() {
               Excluir
             </Button>
             {leadOrigem && (
-              <Button variant="outline" onClick={() => navigate(`/crm/leads/${leadOrigem.id}`)}>
+              <Button variant="outline" onClick={() => navigate(`/crm/${leadOrigem.id}`)}>
                 <Target className="mr-2 h-4 w-4" />
                 Ver Histórico como Lead
               </Button>

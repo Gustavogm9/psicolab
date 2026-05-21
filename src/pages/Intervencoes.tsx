@@ -27,6 +27,7 @@ import { useCategoriasPersonalizadas } from "@/hooks/useCategoriasPersonalizadas
 import { CategoriaSelector } from "@/components/shared/CategoriaSelector";
 import { AgendarEventoIntervencaoDialog } from "@/components/intervencoes/AgendarEventoIntervencaoDialog";
 import { useAuth } from "@/contexts/AuthContext";
+import { TagInput } from "@/components/ui/tag-input";
 
 const Intervencoes = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -485,11 +486,11 @@ const Intervencoes = () => {
 
                 <div className="space-y-2">
                   <Label htmlFor="participantes">Participantes (separados por vírgula)</Label>
-                  <Input 
+                  <TagInput 
                     id="participantes" 
-                    placeholder="João, Maria, Pedro" 
+                    placeholder="Digite um nome e pressione vírgula ou Enter..." 
                     value={formData.participantes}
-                    onChange={(e) => setFormData({ ...formData, participantes: e.target.value })}
+                    onChange={(value) => setFormData({ ...formData, participantes: value })}
                   />
                 </div>
 
@@ -1039,11 +1040,11 @@ const Intervencoes = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="edit-participantes">Participantes (separados por vírgula)</Label>
-                <Input 
+                <TagInput 
                   id="edit-participantes" 
-                  placeholder="João, Maria, Pedro" 
+                  placeholder="Digite um nome e pressione vírgula ou Enter..." 
                   value={formData.participantes}
-                  onChange={(e) => setFormData({ ...formData, participantes: e.target.value })}
+                  onChange={(value) => setFormData({ ...formData, participantes: value })}
                 />
               </div>
 
