@@ -19,7 +19,7 @@ interface PublicWhiteLabelContextType {
 }
 
 const defaultConfig: WhiteLabelConfig = {
-  nome_empresa: "Sistema",
+  nome_empresa: "MenteMetrics",
   logo_url: null,
   cor_primaria: "#6366f1",
   cor_secundaria: "#8b5cf6",
@@ -169,7 +169,7 @@ export function PublicWhiteLabelProvider({ children, whiteLabelId, userId }: Pub
     if (config.titulo_sistema) {
       document.title = config.titulo_sistema;
     } else if (config.nome_empresa) {
-      document.title = `${config.nome_empresa} | Psicolab`;
+      document.title = `${config.nome_empresa} | MenteMetrics`;
     }
 
     let originalFaviconHref = "";

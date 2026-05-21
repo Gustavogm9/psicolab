@@ -262,13 +262,13 @@ export default function Login() {
         </div>
 
         {/* Login Card Principal */}
-        <div className="w-full max-w-sm mx-auto my-auto space-y-6">
-          <Card className="border-0 shadow-none bg-transparent">
-            <CardHeader className="p-0 space-y-1.5 text-center sm:text-left">
-              <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight text-foreground">
+        <div className="w-full max-w-md mx-auto my-auto py-8">
+          <Card className="card-glass border border-border/20 dark:border-white/5 p-8 sm:p-10 rounded-[2.5rem] shadow-xl w-full transition-all duration-300">
+            <CardHeader className="p-0 space-y-2 text-center sm:text-left">
+              <CardTitle className="text-2xl sm:text-3xl font-black tracking-tight text-foreground leading-tight">
                 {isSignUp ? "Crie sua conta" : "Bem-vindo de volta"}
               </CardTitle>
-              <CardDescription className="text-sm text-muted-foreground font-normal">
+              <CardDescription className="text-sm text-muted-foreground font-normal leading-relaxed">
                 {isSignUp 
                   ? "Insira seus dados para começar a atuar com empresas."
                   : "Insira suas credenciais de psicólogo para acessar o painel."
@@ -281,15 +281,15 @@ export default function Login() {
                 
                 {isSignUp && (
                   <div className="space-y-1.5">
-                    <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Nome Completo</Label>
-                    <div className="input-glow-focus rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300">
+                    <Label htmlFor="name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Nome Completo</Label>
+                    <div className="input-premium-wrapper rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300">
                       <Input
                         id="name"
                         type="text"
                         placeholder="Seu nome completo"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 px-3.5"
+                        className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-11 px-4 text-sm"
                         required
                       />
                     </div>
@@ -297,16 +297,16 @@ export default function Login() {
                 )}
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">E-mail Corporativo</Label>
-                  <div className="flex items-center input-glow-focus rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300 px-3.5">
-                    <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <Label htmlFor="email" className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">E-mail Corporativo</Label>
+                  <div className="flex items-center input-premium-wrapper rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300 px-4">
+                    <Mail className="h-4 w-4 text-muted-foreground/75 shrink-0" />
                     <Input
                       id="email"
                       type="email"
                       placeholder="nome@empresa.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 pl-2 pr-0"
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-11 pl-2 pr-0 text-sm"
                       required
                     />
                   </div>
@@ -314,27 +314,27 @@ export default function Login() {
 
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Senha de Acesso</Label>
+                    <Label htmlFor="password" className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">Senha de Acesso</Label>
                     {!isSignUp && (
                       <Link to="/recuperar-senha" className="text-xs text-primary hover:text-accent font-semibold transition-colors">
                         Esqueceu?
                       </Link>
                     )}
                   </div>
-                  <div className="flex items-center input-glow-focus rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300 px-3.5">
-                    <Lock className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div className="flex items-center input-premium-wrapper rounded-xl border border-border/60 bg-background/50 overflow-hidden transition-all duration-300 px-4">
+                    <Lock className="h-4 w-4 text-muted-foreground/75 shrink-0" />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Insira sua senha"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-10 pl-2 pr-2"
+                      className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-11 pl-2 pr-2 text-sm"
                       required
                     />
                     <button
                       type="button"
-                      className="text-muted-foreground hover:text-foreground shrink-0 transition-colors"
+                      className="text-muted-foreground/70 hover:text-foreground shrink-0 transition-colors"
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
@@ -352,7 +352,7 @@ export default function Login() {
                       id="remember"
                       checked={rememberMe}
                       onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                      className="rounded-md border-border/60"
+                      className="rounded-md border-border/60 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                     />
                     <Label
                       htmlFor="remember"
@@ -365,7 +365,7 @@ export default function Login() {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-bold tracking-wider rounded-xl h-11 shadow-lg shadow-primary/10 mt-3 btn-shine-effect text-xs uppercase"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-95 text-white font-bold tracking-wider rounded-xl h-11 shadow-lg shadow-primary/10 mt-3 btn-shine-effect text-xs uppercase btn-premium"
                   disabled={isLoading}
                 >
                   {isLoading ? (

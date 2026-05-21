@@ -27,7 +27,7 @@ interface WhiteLabelContextType {
 }
 
 const defaultConfig: WhiteLabelConfig = {
-  nome_empresa: "Sistema",
+  nome_empresa: "MenteMetrics",
   logo_url: null,
   cor_primaria: "#6366f1",
   cor_secundaria: "#8b5cf6",

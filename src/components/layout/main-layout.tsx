@@ -78,12 +78,12 @@ export function MainLayout({ children, userType, userName, companyName }: MainLa
     <SidebarProvider>
       <ThemeInjector />
       <ImpersonationBanner />
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-slate-50/30 dark:bg-slate-950/10">
         <AppSidebar userType={actualUserType} />
         
         <div className="flex-1 flex flex-col min-w-0">
           {/* Header */}
-          <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <header className="sticky top-0 z-40 border-b border-border/40 bg-background/60 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 transition-all duration-300">
             <div className="flex h-14 items-center gap-4 px-4">
               <SidebarTrigger />
               
@@ -120,7 +120,7 @@ export function MainLayout({ children, userType, userName, companyName }: MainLa
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1 p-6 overflow-auto animate-fade-up">
             {children}
           </main>
         </div>

@@ -4,9 +4,9 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
   includeAssets: ['favicon.ico', 'favicon.png', 'favicon.svg', 'robots.txt'],
   manifest: {
-    name: 'Psicolab - Saúde Mental Corporativa',
-    short_name: 'Psicolab',
-    description: 'Plataforma integrada de avaliação de riscos psicossociais e conformidade NR-1.',
+    name: 'MenteMetrics - Saúde Mental Corporativa',
+    short_name: 'MenteMetrics',
+    description: 'Plataforma integrada de avaliação de riscos psicossociais e bem-estar organizacional.',
     theme_color: '#6366f1',
     background_color: '#ffffff',
     display: 'standalone',

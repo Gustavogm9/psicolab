@@ -141,7 +141,8 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground antialiased;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   }
 }
 
@@ -293,4 +294,79 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+/* Premium Apple-Style Design System Extensions */
+
+.card-glass {
+  background: hsl(var(--card) / 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid hsl(var(--border) / 0.35);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.card-glass:hover {
+  background: hsl(var(--card) / 0.75);
+  transform: translateY(-3px);
+  border-color: hsl(var(--border) / 0.6);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.05);
+}
+
+.dark .card-glass {
+  background: hsl(var(--card) / 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.dark .card-glass:hover {
+  background: hsl(var(--card) / 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 45px rgba(0, 0, 0, 0.35);
+}
+
+.btn-premium {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-premium:active {
+  transform: scale(0.96);
+}
+
+.btn-premium:hover {
+  filter: brightness(1.05);
+}
+
+.input-premium-wrapper {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.input-premium-wrapper:focus-within {
+  transform: scale(1.005);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.12);
+}
+
+/* Premium Minimalist Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.15);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
